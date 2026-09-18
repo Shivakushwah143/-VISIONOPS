@@ -1,0 +1,12 @@
+.env
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+var/
+*.log
+*.partial
+frontend/dist/
+*.tsbuildinfo
+*.key
+*.pem

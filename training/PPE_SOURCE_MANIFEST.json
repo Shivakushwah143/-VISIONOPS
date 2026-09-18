@@ -1,0 +1,47 @@
+{
+  "status": "SOURCE_IDENTIFIED_DOWNLOAD_BLOCKED",
+  "model_repository": "Hexmon/vyra-yolo-ppe-detection",
+  "repository_revision": "08895b33d95d2587423ebe4f7c1b9c41beebd642",
+  "artifact": "best.onnx",
+  "source_url": "https://huggingface.co/Hexmon/vyra-yolo-ppe-detection/blob/main/best.onnx",
+  "download_url": "https://huggingface.co/Hexmon/vyra-yolo-ppe-detection/resolve/08895b33d95d2587423ebe4f7c1b9c41beebd642/best.onnx",
+  "declared_license": "CC-BY-4.0",
+  "published_sha256": "b99fed37bae1d111ddb622a0ef9077d42918a4daebd4a0bffbd8faaba273f246",
+  "local_sha256": null,
+  "local_bytes_verified": false,
+  "source_class_mapping": {
+    "11": {
+      "source_label": "Person",
+      "canonical_class_id": 0,
+      "canonical_label": "person"
+    },
+    "3": {
+      "source_label": "Hardhat",
+      "canonical_class_id": 1,
+      "canonical_label": "helmet"
+    },
+    "8": {
+      "source_label": "NO-Hardhat",
+      "canonical_class_id": 2,
+      "canonical_label": "no_helmet"
+    }
+  },
+  "architecture": "YOLOv8m external Phase-2 baseline candidate; locked custom training architecture remains YOLO11n",
+  "dataset": {
+    "name": "Personal Protective Equipment - Combined Model",
+    "publisher": "Roboflow Universe Projects",
+    "version": 4,
+    "source_url": "https://universe.roboflow.com/roboflow-universe-projects/personal-protective-equipment-combined-model/dataset/4",
+    "declared_license": "CC-BY-4.0",
+    "local_sha256": null,
+    "downloaded": false
+  },
+  "transformations_executed": [],
+  "planned_transformations": [
+    "Validate source class names from actual model metadata and dataset data.yaml before mapping.",
+    "Filter/map Person\u2192person, Hardhat\u2192helmet, NO-Hardhat\u2192no_helmet; ignore other classes.",
+    "Inspect annotation geometry: NO-Hardhat must mean visible bare head, not infer absence from missing helmet.",
+    "Retain original file hashes and publish new hashes for every remapped label/export.",
+    "Split by independent recording/site where provenance supports it; do not claim session-disjoint split without that metadata."
+  ]
+}

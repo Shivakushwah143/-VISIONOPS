@@ -1,0 +1,23 @@
+{
+  "class_map": {
+    "0": "person",
+    "1": "helmet",
+    "2": "no_helmet"
+  },
+  "input_width": 640,
+  "input_height": 640,
+  "color_order": "rgb",
+  "letterbox": true,
+  "score_threshold": 0.35,
+  "nms_iou": 0.5,
+  "inference_fps": 5,
+  "queue_capacity": 2,
+  "stale_frame_ms": 500,
+  "batch_timeout_ms": 100,
+  "rtsp_timeout_seconds": 10,
+  "rule_min_frames": 5,
+  "rule_min_span_seconds": 2,
+  "rule_max_gap_seconds": 1,
+  "rule_cooldown_seconds": 30,
+  "cameras": []
+}

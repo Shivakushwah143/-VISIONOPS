@@ -1,0 +1,14 @@
+{
+  "status": "BLOCKED",
+  "checks": {
+    "database_url_configured": false,
+    "docker_socket_present": false,
+    "localhost_5432_listening": false,
+    "user_switch": "runuser: cannot set groups: Operation not permitted",
+    "effective_capabilities": "0000000000000000",
+    "ppe_download": "curl exit 28: Proxy CONNECT aborted due to timeout",
+    "nvidia_device_nodes": [],
+    "nvidia_parser_compile": "BLOCKED: nvdsinfer_custom_impl.h unavailable; make target failed"
+  },
+  "scope": "Current continuation environment; no database/model substitution attempted"
+}

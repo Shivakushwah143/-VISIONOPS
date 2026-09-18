@@ -1,0 +1,5 @@
+stages:
+  validate:
+    cmd: python -m training.validate_dataset --manifest training/data/manifest.json --root training/data --output training/data/validation.json
+    deps: [training/data/manifest.json, training/validate_dataset.py]
+    outs: [training/data/validation.json]

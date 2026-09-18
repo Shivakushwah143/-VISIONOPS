@@ -1,0 +1,5 @@
+architecture: yolo11n
+image_size: 640
+epochs: 30
+seed: 42
+taxonomy: [person, helmet, no_helmet]

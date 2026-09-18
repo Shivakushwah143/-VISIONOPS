@@ -1,0 +1,16 @@
+{
+  "rollback_permits": {
+    "status": "VERIFIED",
+    "scope": "production allocator component; no PostgreSQL transaction exercised",
+    "maximum_observed_active_leases": 5
+  },
+  "post_commit_watchdog": {
+    "status": "VERIFIED",
+    "scope": "real child-process crashes and restart/backoff/60-second recovery with SQLite; engineering worker fixture, not CV or fleet",
+    "crashes": 3,
+    "restored_release": "v1",
+    "retained_applied_generation": 2,
+    "rejected_generation": 2,
+    "elapsed_seconds": 63.38604044700003
+  }
+}

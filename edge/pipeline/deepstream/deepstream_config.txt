@@ -1,0 +1,19 @@
+# NOT RUNTIME VERIFIED. Missing custom PPE parser/bridge; do not deploy.
+[application]
+enable-perf-measurement=1
+perf-measurement-interval-sec=5
+[streammux]
+batch-size=1
+width=640
+height=640
+batched-push-timeout=100000
+live-source=1
+[primary-gie]
+enable=1
+gie-unique-id=1
+# An evaluated target-specific nvinfer config is required here.
+[tracker]
+enable=1
+tracker-width=640
+tracker-height=384
+# Qualified NvDCF library/config paths are target-specific.

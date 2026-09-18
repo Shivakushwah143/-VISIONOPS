@@ -1,0 +1,34 @@
+{
+  "backend_start_and_liveness": {
+    "status": "VERIFIED",
+    "http_status": 200,
+    "body": {
+      "status": "alive"
+    }
+  },
+  "postgresql_readiness": {
+    "status": "BLOCKED",
+    "http_status": 503,
+    "body": {
+      "error": {
+        "code": "database_unavailable",
+        "message": "database_unavailable",
+        "details": {},
+        "request_id": "09df9c06-f139-4649-93cc-3cb5da528812"
+      }
+    }
+  },
+  "prometheus_exposition": {
+    "status": "VERIFIED",
+    "observed_request_metric": true
+  },
+  "openapi": {
+    "status": "VERIFIED",
+    "paths": 59
+  },
+  "frontend_http_start": {
+    "status": "VERIFIED",
+    "http_status": 200,
+    "browser_interaction": "NOT IMPLEMENTED"
+  }
+}

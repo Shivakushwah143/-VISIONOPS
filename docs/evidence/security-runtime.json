@@ -1,0 +1,6 @@
+{
+  "valid_ed25519_signature": "VERIFIED",
+  "tampered_manifest_rejected": "VERIFIED",
+  "archive_path_traversal_rejected": "VERIFIED",
+  "archive_symlink_rejected": "VERIFIED"
+}

@@ -1,0 +1,39 @@
+{
+  "status": "VERIFIED",
+  "meaning": "Static route presence and PostgreSQL DDL compilation only; not runtime behavioral compliance",
+  "spec_files_read": 22,
+  "spec_hashes": {
+    "01_UNDERSTAND_PROBLEM.md": "1a8322378859b05eb81ab69eea3dbf0108a40b3abeb3fd3f0304294ade9d1acc",
+    "02_RESEARCH_AND_REUSE_STRATEGY.md": "4c4bfd7e8596348ebc703a54e6cc3220e1e959058de083e60b7ec24f823f5d11",
+    "03_PRD.md": "d336aec17391833493c487137cba79df121c4102616aeed9d9f78a99b3a23c98",
+    "04_USER_STORIES.md": "ed637b374949516aa359b42c8ef8bb889eabb7f1854fb6f8d125832304fdacb5",
+    "05_FRD.md": "c78616e9388d4510919a58eafab167717e38261cfcf72e9f80fb8cb59b47fc2b",
+    "06_TECHNICAL_DESIGN.md": "9ec0d08cb0bd5511e0f2afd4877ed0854e0b3fad024e5bb338d8db78d46113ad",
+    "07_LOCKED_TECH_STACK.md": "66b78050e7fa65d8d8766b105660a9ca3e3d106f5c66ff9ac61f689a860db0c0",
+    "08_ZERO_ASSUMPTION_USER_JOURNEYS.md": "83ca74014afa421df806c3c4300d4ce7175653577b15bfec48e81542ae609284",
+    "09_DOMAIN_MODEL.md": "af1a98b077cf909d8fb7a58d7c09ae766e7f0774e8f79b26b7375159065847c5",
+    "10_API_CONTRACTS.md": "91c14348edc704c68dcc4464581b7beef4dbf364d8df6721548857990679ae7d",
+    "11_EDGE_AGENT_CONTRACT.md": "c3ebd520663b0ff31e6ab3c0992d69db3a3c32e7e8413e673d44cc202f29fcee",
+    "12_OBSERVABILITY_SPEC.md": "1a98b74220ee2d5fd6d3828931a2d432c18a7faa606f3ff53bd4702c12c5c860",
+    "13_MODEL_EVALUATION_AND_BENCHMARK_PLAN.md": "d387d3785333cea93768c06e7e7f26f7bef647e84f0d0a51762cd545f0986813",
+    "14_DRIFT_AND_RETRAINING_SPEC.md": "af402d1ec4ff0e46cbd422c257b5100a15d9cfa2981b5a3db9a388fdf6c92412",
+    "15_SECURITY_SPEC.md": "c51011dca61b799900e24b3359ef33a1982adaf804a79fa1e886ce81c3387479",
+    "16_FAILURE_MATRIX.md": "ff2216aec1870f97c3b95850272e9fdec06e7ecce07f2a9fa389729479598c90",
+    "17_ACCEPTANCE_CRITERIA.md": "447a1de27cf3ce92655a385ba4a82408e31b421be7c4c57981120d2f7f2cc484",
+    "18_BUILD_PLAN.md": "6f4f547bb3adfe557c52d0728478dae2c8047805c891866f750ce394117023d7",
+    "19_PROJECT_STRUCTURE.md": "880c0bcf6b496a987673d158b44535c0552b496b563e7a6c020f132b8600c02e",
+    "20_DEMO_PLAN.md": "ba464cb7b24d74e5fe83f08f610cbf7810bd01f27156eea10fc6c4150ec23362",
+    "21_IMPLEMENTATION_MASTER_PROMPT.md": "94890e3d7dca23503718b15bc666dae79fde1ab7c7819bf4822766c01bfcf4f9",
+    "ASSUMPTIONS_AND_DECISIONS.md": "5561ebfe1866f48e71a7ee07cb882c8accddac99c9657febbcdc56cbe8da7c9f"
+  },
+  "expected_method_paths": 72,
+  "actual_method_paths": 71,
+  "missing": [],
+  "postgresql_tables": 30,
+  "known_contract_gaps": [
+    "Some nested requests use unrestricted dictionaries",
+    "Some filter enums and time filters incomplete",
+    "Campaign target/event endpoints require complete keyset pagination",
+    "Raw real-evidence import remains runtime-unverified; full parity qualification incomplete"
+  ]
+}

@@ -1,0 +1,22 @@
+# BLOCKED: compile parser and generate engine on the qualified NVIDIA host.
+[property]
+gpu-id=0
+net-scale-factor=0.00392156862745098
+model-color-format=0
+onnx-file=/artifacts/model.onnx
+model-engine-file=/artifacts/model-fp16.engine
+batch-size=1
+network-mode=2
+num-detected-classes=3
+interval=0
+gie-unique-id=1
+network-type=0
+cluster-mode=2
+maintain-aspect-ratio=1
+symmetric-padding=1
+parse-bbox-func-name=NvDsInferParseVisionOps
+custom-lib-path=/opt/visionops/libvisionops-parser.so
+[class-attrs-all]
+pre-cluster-threshold=0.35
+nms-iou-threshold=0.50
+topk=200

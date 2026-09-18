@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "kind": "onnx_artifact_qualification",
+  "evidence_mode": "real_model_real_footage",
+  "scope": "Artifact loadability, PT/ONNX parity and end-to-end CPU pipeline execution. Not a detector-quality evaluation: no labeled ground truth, mAP or event-quality claim is made.",
+  "artifact": {
+    "path": "var/model/hansung-p3.onnx",
+    "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "size_bytes": 12245976,
+    "opset": 17,
+    "ir_version": 8,
+    "byte_identical_to_export": "var/tools/hansung-best.onnx",
+    "graph_mutated": false
+  },
+  "root_cause_of_hang": {
+    "summary": "Infinite loop in hansung_export_canonical.nms, reached from run_onnx during the first parity frame of hansung_finalize.py. No ONNX stage was slow.",
+    "exact_stage": "hansung_finalize.py line 46 -> hansung_export_canonical.run_onnx line 85 -> nms line 53",
+    "mechanism": "while idx.size: ... if rest.size: idx = rest[mask]. When a class reduced to a single surviving candidate, rest was empty, the update was skipped, idx never shrank and the loop appended the same index forever.",
+    "detected_by": "var/tools/hansung_watchdog.py faulthandler stack dump after 40s of silence",
+    "reproduction": "var/tools/hansung_nms_repro.py (3 boxes, hangs) vs --fixed (returns 2 boxes)",
+    "not_the_cause": [
+      "ONNX load (0.02s)",
+      "ONNX checker (0.08s)",
+      "ORT session init (0.17s)",
+      "single-frame inference (0.13-0.20s)",
+      "metadata rewrite / onnx.save (0.1s)"
+    ]
+  },
+  "stage_timings_seconds": {
+    "stage1_load_onnx": 0.02,
+    "stage2_inspect": 0.0,
+    "stage3_onnx_checker": 0.08,
+    "stage4_ort_session": 0.17,
+    "stage5_one_frame_inference_ms": 138
+  },
+  "output_contract": {
+    "input": { "name": "images", "shape": [1, 3, 640, 640], "dtype": "float32", "color_order": "rgb", "letterbox_pad": 114 },
+    "output": { "name": "output0", "shape": [1, 14, 8400], "box_values": 4, "box_format": "cx,cy,w,h", "class_scores": 10, "objectness_column": false, "nms_free": true },
+    "explanation": "14 channels = 4 box + 10 class scores. No separate objectness column."
+  },
+  "source_class_map": {
+    "0": "Hardhat",
+    "1": "Mask",
+    "2": "NO-Hardhat",
+    "3": "NO-Mask",
+    "4": "NO-Safety Vest",
+    "5": "Person",
+    "6": "Safety Cone",
+    "7": "Safety Vest",
+    "8": "machinery",
+    "9": "vehicle"
+  },
+  "canonical_indices": {
+    "Person": 5,
+    "Hardhat": 0,
+    "NO-Hardhat": 2
+  },
+  "canonicalization": {
+    "method": "adapter_filtering",
+    "source_index_to_canonical_id": { "5": 0, "0": 1, "2": 2 },
+    "discarded_source_indices": [1, 3, 4, 6, 7, 8, 9],
+    "implemented_in": "edge/pipeline.py Detector.infer (scores the mapped source columns only, equivalent to a 3-class subset export)",
+    "metadata": "var/model/hansung-p3.json sidecar; ONNX metadata left as the truthful 10-class source map",
+    "graph_surgery_performed": false
+  },
+  "pt_onnx_parity": {
+    "video": "var/media/ppe-2.mp4",
+    "frames": [0, 25, 50, 100, 150, 200],
+    "score_threshold": 0.35,
+    "nms_iou": 0.5,
+    "pt_detections": 24,
+    "onnx_detections": 24,
+    "matched": 24,
+    "match_criterion": "IoU>0.5, identical source class, abs(conf diff)<0.05",
+    "iou_min": 0.981,
+    "iou_mean": 0.991,
+    "max_abs_confidence_diff": 0.0227,
+    "result": "OK"
+  },
+  "full_video_scan": {
+    "frames": 206,
+    "elapsed_seconds": 29.0,
+    "ms_per_frame": 141,
+    "score_threshold": 0.35,
+    "canonical_detections": {
+      "person": { "dets": 414, "max_conf": 0.921 },
+      "helmet": { "dets": 412, "max_conf": 0.916 },
+      "no_helmet": { "dets": 1, "max_conf": 0.419 }
+    }
+  },
+  "pipeline_execution": {
+    "path": "video -> Detector -> ByteTrack -> PPE association -> SafetyRule -> SQLite outbox",
+    "inferred_frames": 37,
+    "dropped_frames": 169,
+    "elapsed_seconds": 9.3,
+    "latency_p50_ms": 125.0,
+    "latency_p95_ms": 268.6,
+    "events": 0,
+    "events_note": "Only one no_helmet detection (0.419) occurred in the whole clip; the rule requires >=5 frames spanning >=2s, so zero events is the correct outcome, not a pipeline failure."
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "onnx": "1.22.0",
+    "onnxruntime": "1.30.0",
+    "opencv": "5.0.0",
+    "ultralytics": "8.4.152",
+    "torch": "2.14.0+cpu"
+  },
+  "commands": [
+    "python -u var/tools/hansung_diag.py --stages 1,2,3,4,5 --onnx var/tools/hansung-best.onnx",
+    "python -u var/tools/hansung_diag.py --stages 7,9 --onnx var/model/hansung-p3.onnx",
+    "python -u var/tools/hansung_watchdog.py --stall-seconds 40 var/tools/hansung_finalize.py"
+  ]
+}

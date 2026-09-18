@@ -1,0 +1,69 @@
+name: visionops
+services:
+  postgres:
+    image: postgres:16.11-bookworm
+    environment:
+      POSTGRES_DB: visionops
+      POSTGRES_USER: visionops
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run setup}
+    volumes: [postgres:/var/lib/postgresql/data, './postgres-init.sql:/docker-entrypoint-initdb.d/01-mlflow.sql:ro']
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U visionops -d visionops']
+      interval: 5s
+      retries: 20
+    networks: [private]
+  migrate:
+    build: {context: .., dockerfile: infrastructure/docker/backend.Dockerfile}
+    env_file: ../.env
+    command: [alembic, -c, backend/alembic.ini, upgrade, head]
+    depends_on: {postgres: {condition: service_healthy}}
+    networks: [private]
+  backend:
+    build: {context: .., dockerfile: infrastructure/docker/backend.Dockerfile}
+    env_file: ../.env
+    volumes: [artifacts:/data, '../var/media:/media:ro']
+    depends_on: {migrate: {condition: service_completed_successfully}}
+    networks: [private]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
+      interval: 10s
+      retries: 10
+  controller:
+    build: {context: .., dockerfile: infrastructure/docker/backend.Dockerfile}
+    env_file: ../.env
+    command: [python, -m, backend.app.controller]
+    volumes: [artifacts:/data]
+    depends_on: {backend: {condition: service_healthy}}
+    networks: [private]
+  frontend:
+    build: {context: .., dockerfile: infrastructure/docker/frontend.Dockerfile}
+    ports: ['127.0.0.1:8080:8080']
+    depends_on: {backend: {condition: service_healthy}}
+    networks: [private]
+  mlflow:
+    build: {context: .., dockerfile: infrastructure/docker/backend.Dockerfile}
+    command: [mlflow, server, --host, 0.0.0.0, --port, '5000', --allowed-hosts, 'localhost,localhost:5000,127.0.0.1,127.0.0.1:5000,mlflow,mlflow:5000', --backend-store-uri, 'postgresql+psycopg://visionops:${POSTGRES_PASSWORD}@postgres:5432/mlflow', --artifacts-destination, /data/mlflow/artifacts]
+    ports: ['127.0.0.1:5000:5000']
+    volumes: [mlflow:/data/mlflow]
+    depends_on: {postgres: {condition: service_healthy}}
+    networks: [private]
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    command: ['--config.file=/etc/prometheus/prometheus.yml', '--storage.tsdb.retention.time=7d']
+    volumes: ['./../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro', 'prometheus:/prometheus']
+    networks: [private]
+  grafana:
+    image: grafana/grafana:12.2.1
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Run setup}
+    ports: ['127.0.0.1:3000:3000']
+    volumes: ['../observability/grafana/provisioning:/etc/grafana/provisioning:ro','../observability/grafana/dashboards:/var/lib/grafana/dashboards:ro','grafana:/var/lib/grafana']
+    networks: [private]
+volumes:
+  postgres:
+  artifacts:
+  mlflow:
+  prometheus:
+  grafana:
+networks:
+  private:

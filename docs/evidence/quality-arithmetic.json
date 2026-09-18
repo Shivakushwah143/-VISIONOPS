@@ -1,0 +1,12 @@
+{
+  "status": "VERIFIED",
+  "scope": "known-answer metric arithmetic only; synthetic inputs never uploaded as real evaluation",
+  "checks": [
+    "precision",
+    "recall",
+    "F1",
+    "temporal precision/recall",
+    "nearest-rank p50/p95",
+    "insufficient-evidence rejection"
+  ]
+}

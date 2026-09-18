@@ -1,0 +1,11 @@
+# Raw evaluation evidence contract
+
+The continuation adds `training.quality.measured`, which recomputes precision/recall/F1, AP at 10 IoU thresholds, a background-inclusive confusion matrix, temporal event matching, and nearest-rank latency percentiles. These calculations are implemented; no real PPE result was collected in this environment.
+
+`training.recompute_evidence` reads actual raw observations and optionally stores them in the configured MLflow server. The API accepts only `mlflow:<32-hex-run-id>/evaluation/evidence.json`, requires a finished run, downloads its named artifact into a temporary directory, matches model SHA-256/dataset DVC hash/profile, and recomputes metrics. Submitted summary metrics cannot replace the recomputed result.
+
+Required raw fields: schema_version=1, evidence_mode=real, model_sha256, dataset_dvc_hash, hardware_profile; predictions and ground_truth maps keyed by identical frame/image identifiers; inference_latency_ms; inference_frames; measurement_duration_seconds; peak_rss_bytes; crashes; dropped_frames; event_windows; events. Boxes contain class_id and normalized bbox; predictions also contain confidence. Preserve low-threshold predictions for AP; operating precision/recall use confidence 0.35.
+
+Each event window contains camera_id, session_id, start_seconds, end_seconds, positive boolean and bbox. Each observed event contains camera_id, session_id, observed_seconds and bbox. Matching requires the same camera/session, timestamp inside the positive interval and IoU ≥0.5. Only one detection matches each positive window; unmatched observed events are false positives. Annotation policy must ensure windows are disjoint and cover the evaluated recording, including negatives.
+
+Promotion additionally checks support, precision/recall/AP thresholds, CPU latency/FPS/RSS, no crashes, 30-minute duration, at least 100 warmup frames, three timed repetitions of at least 1,000 frames, and parity_reference_sha256 metadata. The complete raw parity-comparison importer and automatic temporal-video evidence collector remain incomplete. Protocol metadata is not itself proof of execution. The importer must undergo a real MLflow/PostgreSQL evaluation journey before being marked VERIFIED.
