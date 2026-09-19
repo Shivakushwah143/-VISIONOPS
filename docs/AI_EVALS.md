@@ -1,5 +1,14 @@
 # AI evaluation status
 
+> **Continuation 2 update.** The detector-quality blocker is unchanged: no labeled PPE
+> dataset exists here, so no AP/mAP/precision/recall and no temporal event-quality number
+> is reported. What did move is *runtime* qualification: the qualified artifact's profile
+> is auto-detected from its own metadata, an independent decoder reproduces the canonical
+> decode exactly, and PyTorch→ONNX export now enforces two-threshold graph parity
+> (`scripts/export_onnx`). Export or parity success never approves a model: the report
+> keeps `model_quality: NOT EVALUATED` and `release_approval: NOT GRANTED`. See
+> [CURRENT_VERIFIED_STATE.md](CURRENT_VERIFIED_STATE.md).
+
 **BLOCKED:** No trained PPE model was executed. No AP, mAP, precision, recall, event quality or production FPS is reported as achieved.
 
 The source candidate is Hexmon/vyra-yolo-ppe-detection at revision `08895b33d95d2587423ebe4f7c1b9c41beebd642`, artifact `best.onnx`, publisher-declared CC BY 4.0. Published SHA-256: `b99fed37bae1d111ddb622a0ef9077d42918a4daebd4a0bffbd8faaba273f246`. Local bytes and geometry are unverified. Source Person (11), Hardhat (3), NO-Hardhat (8) map to canonical person (0), helmet (1), no_helmet (2). Other classes are discarded. Source metadata: `training/PPE_SOURCE_MANIFEST.json`.

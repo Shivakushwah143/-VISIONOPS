@@ -14,6 +14,7 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 from .db import *
 from .security import *
 from .schemas import *
+from shared import hardware_profiles
 REQUESTS=Counter('visionops_http_requests_total','HTTP requests',['method','route','status'])
 LATENCY=Histogram('visionops_http_duration_seconds','HTTP request latency',['route'])
 EVENTS=Counter('visionops_events_ingested_total','Persisted events',['mode','kind'])
@@ -145,6 +146,8 @@ def create_site(body:SiteInput,req:Request):
         r=Site(**b); db.add(r); db.flush(); audit(db,u,'create',r,req); return save_response(db,req,u,b,out(r))
 @app.post('/api/v1/devices')
 def create_device(body:DeviceInput,req:Request):
+    # Explicit profile matrix instead of a single hardcoded x86_64 literal.
+    if not hardware_profiles.known(body.hardware_profile):fail('unknown_hardware_profile',422)
     with Session() as db:
         u=user(req,db,OPS); b=body.model_dump(mode='json'); old=replay(db,req,u,b)
         if old:return old
@@ -157,7 +160,16 @@ def detail_device(device_id:str,req:Request):
     with Session() as db:
         user(req,db); d=get(db,Device,device_id)
         h=db.scalar(select(Heartbeat).where(Heartbeat.device_id==device_id).order_by(Heartbeat.received_at.desc()))
-        return out({'device':public(d),'last_heartbeat':public(h) if h else None,'desired_state':desired(db,d)})
+        profile=hardware_profiles.resolve(d.hardware_profile)
+        # Inventory exposes architecture/runtime/target versions from the latest
+        # heartbeat capability report; unknown stays null rather than zero.
+        reported=(h.capabilities if h else {}) or {}
+        inventory={k:reported.get(k) for k in ('architecture','os','runtime','runtime_version','simulated_hardware','jetpack_version','cuda_version','tensorrt_version','declared_versions','measured_versions')}
+        return out({'device':public(d),'last_heartbeat':public(h) if h else None,'desired_state':desired(db,d),'hardware_profile':{**profile,'architecture':profile['architectures'][0]},'reported_runtime':inventory})
+@app.get('/api/v1/hardware-profiles')
+def hardware_profile_matrix(req:Request):
+    with Session() as db:user(req,db)
+    return out({'profiles':hardware_profiles.matrix(),'compatibility_evaluated_at':'device-enrollment-time'})
 @app.post('/api/v1/devices/{device_id}/enrollment-tokens')
 def issue_token(device_id:str,body:dict,req:Request):
     body_exact(body,['reason'],['reason'])
@@ -208,7 +220,7 @@ def get_desired(device_id:str,req:Request):
 def heartbeat(device_id:str,body:HeartbeatInput,req:Request):
     if str(body.device_id)!=device_id: fail('device_scope_denied',403)
     with Session() as db:
-        d=device(req,db,device_id); db.refresh(d,with_for_update=True)
+        d=device(req,db,device_id); db.refresh(d,with_for_update=True); previous_health=d.health_status
         boot_id=str(body.boot_id); boot=db.scalar(select(Boot).where(Boot.device_id==device_id,Boot.boot_id==boot_id))
         if boot and boot.retired_at or (d.last_boot_id==boot_id and body.sequence<=d.last_sequence):return out({'accepted':False,'server_time':now(),'desired_generation':d.desired_generation})
         if body.applied_generation>0:
@@ -232,6 +244,8 @@ def heartbeat(device_id:str,body:HeartbeatInput,req:Request):
         # Old legitimate reports never overwrite a newer committed generation.
         if body.applied_generation>=d.applied_generation:
             for k in ('actual_release_id','actual_config_version_id','applied_generation','agent_state','health_status'):setattr(d,k,b[k])
+        # Broadcast only after this transaction commits.
+        if d.health_status!=previous_health:events.bus.publish_on_commit(db,'device.health_changed',{'device_id':device_id,'health_status':d.health_status,'previous_health':previous_health,'agent_state':d.agent_state,'applied_generation':d.applied_generation,'desired_generation':d.desired_generation,'last_error_code':body.last_error_code})
         for m in body.metric_summaries:
             if m.camera_id and get(db,Camera,m.camera_id).device_id!=device_id:fail('camera_scope_denied',403)
             if not db.get(Metric,str(m.metric_summary_id)):
@@ -244,7 +258,7 @@ async def ingest(req:Request):
     body=json.loads(raw); body_exact(body,['events'],['events'])
     if not isinstance(body['events'],list) or len(body['events'])>100:fail('invalid_batch',422)
     with Session() as db:
-        d=device(req,db); results=[]
+        d=device(req,db); results=[]; realtime=[]
         for e in body['events']:
             eid=e.get('safety_event_id',e.get('detection_event_id','unknown'))
             try:
@@ -265,9 +279,12 @@ async def ingest(req:Request):
                         for k in ('observed_at','window_start','window_end'):
                             if k in vals:vals[k]=getattr(parsed,k)
                         db.add(cls(**vals,device_id=d.device_id,evidence_mode=d.mode,received_at=now(),payload_sha256=hash_value)); db.flush(); status='accepted'
+                        if cls is Safety:
+                            realtime.append({'safety_event_id':str(eid),'camera_id':str(parsed.camera_id),'device_id':d.device_id,'event_type':parsed.event_type,'observed_at':parsed.observed_at.isoformat(),'confidence':parsed.confidence,'track_id':parsed.track_id,'supporting_frames':parsed.supporting_frames,'evidence_mode':d.mode})
                     results.append({'event_id':str(eid),'status':status})
             except Exception as exc:
                 results.append({'event_id':str(eid),'status':'rejected','error_code':str(exc.detail) if isinstance(exc,HTTPException) else 'invalid_event'})
+        for item in realtime:events.bus.publish_on_commit(db,'safety_event.created',item)
         db.commit()
         for r in results:
             if r['status']=='accepted':EVENTS.labels(d.mode,'event').inc()
@@ -448,7 +465,9 @@ def revoke_release(release_id:str,body:dict,req:Request):
         if db.scalar(select(Device).where((Device.desired_release_id==release_id)|(Device.actual_release_id==release_id))):fail('referenced_active_requires_replacement')
         r.status='revoked';audit(db,u,'revoke',r,req);return save_response(db,req,u,body,out(r),200)
 from .telemetry import configure
+from . import events
 configure(app)
+events.register(app)
 from prometheus_client import REGISTRY
 from .pipeline_metrics import PipelineMetrics
 REGISTRY.register(PipelineMetrics())

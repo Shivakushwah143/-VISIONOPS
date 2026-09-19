@@ -6,7 +6,7 @@ excluded={'.venv','node_modules','__pycache__','.git','.idea','.vscode','dist','
 def include(path):
     rel=path.relative_to(root)
     return path.is_file() and not any(x in excluded for x in rel.parts) and path.name!='.env' and not path.name.endswith(('.pyc','.log','.partial','.key','.pem','.tsbuildinfo'))
-files=sorted(p for p in root.rglob('*') if include(p));required=['START_HERE.md','README.md','pyproject.toml','uv.lock','requirements.lock','frontend/package-lock.json','infrastructure/compose.yaml','docs/ARCHITECTURE.md','docs/IMPLEMENTATION_REPORT.md','docs/VERIFICATION_REPORT.md','docs/BENCHMARK_REPORT.md','docs/REQUIREMENTS_TRACEABILITY.md','docs/ASSUMPTIONS_AND_DECISIONS.md','docs/KNOWN_LIMITATIONS.md']
+files=sorted(p for p in root.rglob('*') if include(p));required=['START_HERE.md','README.md','pyproject.toml','uv.lock','requirements.lock','frontend/package-lock.json','infrastructure/compose.yaml','docs/ARCHITECTURE.md','docs/IMPLEMENTATION_REPORT.md','docs/VERIFICATION_REPORT.md','docs/BENCHMARK_REPORT.md','docs/REQUIREMENTS_TRACEABILITY.md','docs/ASSUMPTIONS_AND_DECISIONS.md','docs/KNOWN_LIMITATIONS.md','docs/CURRENT_VERIFIED_STATE.md','docs/ROLLBACK_STRATEGY.md','docs/JETSON_DEPLOYMENT_TARGET.md','docs/LOCAL_RTSP.md','docs/10K_FLEET_SCALING_REPORT.md']
 for name in required:
     file=root/name
     if not file.is_file() or not file.stat().st_size:raise RuntimeError('Missing required file '+name)

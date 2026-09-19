@@ -1,0 +1,75 @@
+{
+  "threshold": 0.35,
+  "samples": [
+    {
+      "sample": "frame-0000.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9957,
+      "max_confidence_delta": 0.0006
+    },
+    {
+      "sample": "frame-0025.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9956,
+      "max_confidence_delta": 0.0009
+    },
+    {
+      "sample": "frame-0050.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9956,
+      "max_confidence_delta": 0.0009
+    },
+    {
+      "sample": "frame-0100.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9956,
+      "max_confidence_delta": 0.0009
+    },
+    {
+      "sample": "frame-0150.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9956,
+      "max_confidence_delta": 0.0009
+    },
+    {
+      "sample": "frame-0200.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 0.9955,
+      "max_confidence_delta": 0.0009
+    }
+  ],
+  "reference_detections": 24,
+  "matched": 24,
+  "missing": 0,
+  "min_iou": 0.9955,
+  "mean_iou": 0.9975,
+  "max_confidence_delta": 0.0009,
+  "max_box_delta_pixels": 0.6736000180244446,
+  "class_agreement": "24/24",
+  "criterion": "all detections matched within the same class at IoU>=0.5 and |confidence delta|<=0.05",
+  "passed": true
+}

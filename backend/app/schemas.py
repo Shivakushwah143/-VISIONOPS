@@ -61,7 +61,9 @@ class SafetyInput(Strict):
     camera_id: UUID
     stream_session_id: UUID
     track_id: str
-    event_type: Literal['no_helmet_violation']
+    # Kept in step with edge.temporal.EVENT_TYPES so a configured analyzer can
+    # never emit an event the central API will reject.
+    event_type: Literal['no_helmet_violation', 'restricted_zone_dwell', 'loitering', 'person_down_suspected']
     observed_at: datetime
     window_start: datetime
     window_end: datetime

@@ -1,0 +1,882 @@
+{
+  "status": "VERIFIED ON NVIDIA GPU \u2014 PHYSICAL JETSON STILL NOT VERIFIED",
+  "captured_at": "2026-09-18T10:49:10.749874+00:00",
+  "environment": {
+    "captured_at": "2026-09-18T10:46:40.872616+00:00",
+    "host": {
+      "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "python": "3.13.15"
+    },
+    "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "gpu_names": [
+      "Tesla T4"
+    ],
+    "nvidia_smi_query": "Tesla T4, 580.82.07, 15360 MiB, 7.5",
+    "nvidia_smi": {
+      "present": true,
+      "gpu_detected": true,
+      "reason": "ok",
+      "gpu_names": [
+        "Tesla T4"
+      ]
+    },
+    "onnxruntime_providers": [
+      "TensorrtExecutionProvider",
+      "CUDAExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "driver": "580.82.07",
+    "cuda": "12.8",
+    "tensorrt": "11.3.0.99",
+    "torch": "2.11.0+cu128",
+    "onnxruntime": "1.24.4",
+    "gpu_vram": "15360 MiB",
+    "compute_capability": "7.5",
+    "torch_cuda_build": "12.8",
+    "torch_cuda_available": true,
+    "torch_device_name": "Tesla T4",
+    "torch_total_memory_bytes": 15637086208,
+    "torch_compute_capability": "7.5",
+    "capabilities": {
+      "ONNX_CPU": {
+        "available": true,
+        "status": "VERIFIED",
+        "reason": null,
+        "providers": [
+          "TensorrtExecutionProvider",
+          "CUDAExecutionProvider",
+          "CPUExecutionProvider"
+        ]
+      },
+      "ONNX_CUDA": {
+        "available": true,
+        "status": "AVAILABLE - NOT QUALIFIED LOCALLY",
+        "reason": null,
+        "providers": [
+          "TensorrtExecutionProvider",
+          "CUDAExecutionProvider",
+          "CPUExecutionProvider"
+        ]
+      },
+      "TENSORRT": {
+        "available": true,
+        "status": "AVAILABLE - NOT QUALIFIED LOCALLY",
+        "reason": null,
+        "tensorrt_module": true,
+        "tensorrt_execution_provider": true
+      },
+      "DEEPSTREAM": {
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "deepstream_or_pyds_unavailable",
+        "sdk_root_present": false,
+        "pyds_importable": false
+      },
+      "gpu_metrics_available": true
+    },
+    "git": {
+      "commit": null,
+      "working_tree": "clean"
+    },
+    "onnx_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "onnx_bytes": 12245976,
+    "contract": {
+      "profile": "hansung_ppe_yolov8n_10",
+      "source_index_to_canonical": {
+        "0": 1,
+        "2": 2,
+        "5": 0
+      },
+      "source_classes": {
+        "0": "Hardhat",
+        "1": "Mask",
+        "2": "NO-Hardhat",
+        "3": "NO-Mask",
+        "4": "NO-Safety Vest",
+        "5": "Person",
+        "6": "Safety Cone",
+        "7": "Safety Vest",
+        "8": "machinery",
+        "9": "vehicle"
+      },
+      "input_shape": [
+        640,
+        640
+      ],
+      "source_count": 10,
+      "raw_channels": 14,
+      "score_threshold": 0.35,
+      "nms_iou": 0.5,
+      "canonical_classes": {
+        "0": "person",
+        "1": "helmet",
+        "2": "no_helmet"
+      }
+    },
+    "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+  },
+  "model": {
+    "path": "/content/visionops_gpu/model/hansung-p3.onnx",
+    "bytes": 12245976,
+    "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "opset": [
+      {
+        "domain": "ai.onnx",
+        "version": 17
+      }
+    ],
+    "ir_version": 8,
+    "input_name": "images",
+    "input_shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "output_name": "output0",
+    "output_shape": [
+      1,
+      14,
+      8400
+    ],
+    "declared_names": "{0: 'Hardhat', 1: 'Mask', 2: 'NO-Hardhat', 3: 'NO-Mask', 4: 'NO-Safety Vest', 5: 'Person', 6: 'Safety Cone', 7: 'Safety Vest', 8: 'machinery', 9: 'vehicle'}",
+    "producer": "pytorch 2.14.0",
+    "expected_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "matches_qualified_artifact": true,
+    "qualified_record": {
+      "architecture": "YOLOv8n",
+      "publisher": "Hansung-Cho/yolov8-ppe-detection",
+      "source_index_to_canonical_id": {
+        "5": 0,
+        "0": 1,
+        "2": 2
+      },
+      "canonical_class_map": {
+        "0": "person",
+        "1": "helmet",
+        "2": "no_helmet"
+      },
+      "declared_output_shape": [
+        1,
+        14,
+        8400
+      ]
+    }
+  },
+  "contract": {
+    "profile": "hansung_ppe_yolov8n_10",
+    "source_index_to_canonical": {
+      "0": 1,
+      "2": 2,
+      "5": 0
+    },
+    "source_classes": {
+      "0": "Hardhat",
+      "1": "Mask",
+      "2": "NO-Hardhat",
+      "3": "NO-Mask",
+      "4": "NO-Safety Vest",
+      "5": "Person",
+      "6": "Safety Cone",
+      "7": "Safety Vest",
+      "8": "machinery",
+      "9": "vehicle"
+    },
+    "input_shape": [
+      640,
+      640
+    ],
+    "source_count": 10,
+    "raw_channels": 14,
+    "score_threshold": 0.35,
+    "nms_iou": 0.5,
+    "canonical_classes": {
+      "0": "person",
+      "1": "helmet",
+      "2": "no_helmet"
+    }
+  },
+  "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba",
+  "samples": {
+    "source": "/content/visionops_gpu/samples",
+    "count": 6,
+    "samples": [
+      {
+        "id": "frame-0000.jpg",
+        "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-0025.jpg",
+        "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-0050.jpg",
+        "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-0100.jpg",
+        "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-0150.jpg",
+        "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-0200.jpg",
+        "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      }
+    ],
+    "note": "each runtime preprocesses these exact inputs with the shared letterbox"
+  },
+  "contract_semantics": {
+    "threshold": 0.001,
+    "mapped_source_indices": [
+      0,
+      2,
+      5
+    ],
+    "discarded_source_indices": [
+      1,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9
+    ],
+    "source_count": 10,
+    "canonical_classes": [
+      0,
+      1,
+      2
+    ],
+    "boxes_above_threshold": 1827,
+    "global_argmax_on_discarded_class": 908,
+    "argmax_interpretations_that_would_differ": 908,
+    "samples": [
+      {
+        "sample": "frame-0000.jpg",
+        "boxes_above_threshold": 366,
+        "global_argmax_on_discarded_class": 146,
+        "global_argmax_differs_from_canonical_subset": 146,
+        "canonical_detections_emitted": 34,
+        "canonical_classes": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "sample": "frame-0025.jpg",
+        "boxes_above_threshold": 328,
+        "global_argmax_on_discarded_class": 166,
+        "global_argmax_differs_from_canonical_subset": 166,
+        "canonical_detections_emitted": 26,
+        "canonical_classes": [
+          0,
+          1
+        ]
+      },
+      {
+        "sample": "frame-0050.jpg",
+        "boxes_above_threshold": 375,
+        "global_argmax_on_discarded_class": 173,
+        "global_argmax_differs_from_canonical_subset": 173,
+        "canonical_detections_emitted": 40,
+        "canonical_classes": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "sample": "frame-0100.jpg",
+        "boxes_above_threshold": 336,
+        "global_argmax_on_discarded_class": 218,
+        "global_argmax_differs_from_canonical_subset": 218,
+        "canonical_detections_emitted": 27,
+        "canonical_classes": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "sample": "frame-0150.jpg",
+        "boxes_above_threshold": 234,
+        "global_argmax_on_discarded_class": 114,
+        "global_argmax_differs_from_canonical_subset": 114,
+        "canonical_detections_emitted": 18,
+        "canonical_classes": [
+          0,
+          1
+        ]
+      },
+      {
+        "sample": "frame-0200.jpg",
+        "boxes_above_threshold": 188,
+        "global_argmax_on_discarded_class": 91,
+        "global_argmax_differs_from_canonical_subset": 91,
+        "canonical_detections_emitted": 17,
+        "canonical_classes": [
+          0,
+          1
+        ]
+      }
+    ],
+    "conclusion": "A global argmax would have changed the interpretation of 908 box(es) in this sample set; every runtime therefore uses the canonical subset decode."
+  },
+  "benchmark_table": [
+    {
+      "runtime": "ONNX_CPU",
+      "precision": "fp32",
+      "gpu": "Tesla T4",
+      "input": [
+        640,
+        640
+      ],
+      "p50_ms": 116.825,
+      "p95_ms": 176.232,
+      "mean_ms": 126.724,
+      "throughput_fps_model_only": 7.89,
+      "gpu_memory": "NOT MEASURED"
+    },
+    {
+      "runtime": "TENSORRT",
+      "gpu": "Tesla T4",
+      "precision": "fp32",
+      "input": [
+        640,
+        640
+      ],
+      "p50_ms": 4.658,
+      "p95_ms": 6.479,
+      "mean_ms": 4.834,
+      "throughput_fps_model_only": 206.87,
+      "gpu_memory": "NOT MEASURED"
+    },
+    {
+      "runtime": "TENSORRT",
+      "gpu": "Tesla T4",
+      "precision": "fp16",
+      "input": [
+        640,
+        640
+      ],
+      "p50_ms": 4.293,
+      "p95_ms": 5.59,
+      "mean_ms": 4.78,
+      "throughput_fps_model_only": 209.21,
+      "gpu_memory": "NOT MEASURED"
+    }
+  ],
+  "precisions": {
+    "fp32": {
+      "status": "VERIFIED",
+      "engine": {
+        "runtime": "TENSORRT",
+        "precision": "fp32",
+        "model_path": "/content/visionops_gpu/model/hansung-p3.onnx",
+        "input_shape": [
+          640,
+          640
+        ],
+        "contract_profile": "hansung_ppe_yolov8n_10",
+        "expected_output_channels": 14,
+        "engine": "/tmp/visionops-engines-5bmvfu0m/visionops-fp32.engine",
+        "engine_bytes": 80982948,
+        "engine_sha256": "7ca68400f45e3898eec321dcf5a6e4508937ece14b7df14fadec422812967315",
+        "onnx_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+        "workspace_bytes": 1073741824,
+        "engine_io": {
+          "inputs": [
+            {
+              "name": "images",
+              "dtype": "DataType.FLOAT",
+              "shape": [
+                1,
+                3,
+                640,
+                640
+              ],
+              "torch_dtype": "torch.float32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "output0",
+              "dtype": "DataType.FLOAT",
+              "shape": [
+                1,
+                14,
+                8400
+              ],
+              "torch_dtype": "torch.float32"
+            }
+          ]
+        },
+        "gpu": "Tesla T4",
+        "tensorrt_version": "11.3.0.99",
+        "dynamic_input": false,
+        "fast_fp16": null,
+        "device_memory_bytes": null,
+        "build_seconds": 54.06,
+        "engine_deleted_after_run": true
+      },
+      "parity": {
+        "threshold": 0.35,
+        "samples": [
+          {
+            "sample": "frame-0000.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0025.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0050.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0100.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0150.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0200.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          }
+        ],
+        "reference_detections": 24,
+        "matched": 24,
+        "missing": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "max_box_delta_pixels": "1e-04",
+        "class_agreement": "24/24",
+        "criterion": "all detections matched within the same class at IoU>=0.5 and |confidence delta|<=0.05",
+        "passed": true
+      },
+      "benchmark": {
+        "iterations": 100,
+        "warmup": 20,
+        "p50_ms": 4.658,
+        "p95_ms": 6.479,
+        "mean_ms": 4.834,
+        "min_ms": 4.168,
+        "max_ms": 7.579,
+        "throughput_fps_model_only": 206.87,
+        "timing": "host timer around a synchronised execute (torch.cuda.synchronize after each call)",
+        "end_to_end": {
+          "iterations": 100,
+          "warmup": 20,
+          "p50_ms": 27.784,
+          "p95_ms": 41.451,
+          "mean_ms": 30.721,
+          "throughput_fps_end_to_end": 32.55,
+          "scope": "letterbox + runtime + canonical decode; excludes video decode, tracking and events"
+        }
+      }
+    },
+    "fp16": {
+      "status": "VERIFIED",
+      "engine": {
+        "runtime": "TENSORRT",
+        "precision": "fp16",
+        "model_path": "/content/visionops_gpu/model/hansung-p3.onnx",
+        "input_shape": [
+          640,
+          640
+        ],
+        "contract_profile": "hansung_ppe_yolov8n_10",
+        "expected_output_channels": 14,
+        "engine": "/tmp/visionops-engines-5bmvfu0m/visionops-fp16.engine",
+        "engine_bytes": 81084700,
+        "engine_sha256": "24937493e098ab9ccc60a99483cdfe77e148a03b6498ebb0b71a66268c9fb84d",
+        "onnx_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+        "workspace_bytes": 1073741824,
+        "engine_io": {
+          "inputs": [
+            {
+              "name": "images",
+              "dtype": "DataType.FLOAT",
+              "shape": [
+                1,
+                3,
+                640,
+                640
+              ],
+              "torch_dtype": "torch.float32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "output0",
+              "dtype": "DataType.FLOAT",
+              "shape": [
+                1,
+                14,
+                8400
+              ],
+              "torch_dtype": "torch.float32"
+            }
+          ]
+        },
+        "gpu": "Tesla T4",
+        "tensorrt_version": "11.3.0.99",
+        "dynamic_input": false,
+        "fast_fp16": null,
+        "device_memory_bytes": null,
+        "build_seconds": 47.29,
+        "engine_deleted_after_run": true
+      },
+      "parity": {
+        "threshold": 0.35,
+        "samples": [
+          {
+            "sample": "frame-0000.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0025.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0050.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0100.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0150.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          },
+          {
+            "sample": "frame-0200.jpg",
+            "reference_detections": 4,
+            "candidate_detections": 4,
+            "matched": 4,
+            "missing": 0,
+            "extra": 0,
+            "min_iou": 1.0,
+            "max_confidence_delta": 0.0
+          }
+        ],
+        "reference_detections": 24,
+        "matched": 24,
+        "missing": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "max_box_delta_pixels": "1e-04",
+        "class_agreement": "24/24",
+        "criterion": "all detections matched within the same class at IoU>=0.5 and |confidence delta|<=0.05",
+        "passed": true
+      },
+      "benchmark": {
+        "iterations": 100,
+        "warmup": 20,
+        "p50_ms": 4.293,
+        "p95_ms": 5.59,
+        "mean_ms": 4.78,
+        "min_ms": 4.161,
+        "max_ms": 7.843,
+        "throughput_fps_model_only": 209.21,
+        "timing": "host timer around a synchronised execute (torch.cuda.synchronize after each call)",
+        "end_to_end": {
+          "iterations": 100,
+          "warmup": 20,
+          "p50_ms": 20.825,
+          "p95_ms": 24.095,
+          "mean_ms": 21.214,
+          "throughput_fps_end_to_end": 47.14,
+          "scope": "letterbox + runtime + canonical decode; excludes video decode, tracking and events"
+        }
+      }
+    }
+  },
+  "model_only_theoretical_throughput": {
+    "formula": "1000 / mean_latency_ms",
+    "values": {
+      "fp32": 206.87,
+      "fp16": 209.21
+    },
+    "caveat": "MODEL-ONLY THEORETICAL THROUGHPUT. It excludes RTSP/network, decode, preprocessing, tracking, temporal analysis, postprocessing and event handling, and is therefore higher than achievable end-to-end camera FPS."
+  },
+  "int8": {
+    "status": "NOT ATTEMPTED",
+    "reason": "REAL CALIBRATION/VALIDATION REQUIRED \u2014 no representative calibration dataset exists in this repository; FP16 is sufficient for this verification"
+  },
+  "engine_policy": {
+    "plan": "trtexec --onnx=<onnx> --saveEngine=<engine> --fp16 ; equivalently edge.runtimes.TensorRTRuntime.build_engine() (used here)",
+    "engines_retained": false,
+    "note": "engines are target-runtime and hardware specific and are never committed"
+  },
+  "superseded_records_removed": [
+    "blocked.json",
+    "preflight.json"
+  ],
+  "not_verified": [
+    "physical NVIDIA Jetson",
+    "JetPack on physical hardware",
+    "Jetson thermal/power/NVDEC behaviour",
+    "10K physical Jetson fleet",
+    "model quality (no labeled dataset)"
+  ],
+  "steps": [
+    {
+      "step": "verify_model_identity",
+      "status": "ok",
+      "sha256": "b239aa7e881fc590",
+      "bytes": 12245976,
+      "input": [
+        1,
+        3,
+        640,
+        640
+      ],
+      "output": [
+        1,
+        14,
+        8400
+      ],
+      "opset": [
+        {
+          "domain": "ai.onnx",
+          "version": 17
+        }
+      ]
+    },
+    {
+      "step": "canonical_contract",
+      "status": "ok",
+      "profile": "hansung_ppe_yolov8n_10",
+      "source_count": 10,
+      "raw_channels": 14,
+      "mapping": {
+        "0": 1,
+        "2": 2,
+        "5": 0
+      },
+      "mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+    },
+    {
+      "step": "load_evaluation_samples",
+      "status": "ok",
+      "count": 6,
+      "source": "/content/visionops_gpu/samples"
+    },
+    {
+      "step": "reference_runtime",
+      "status": "ok",
+      "runtime": "ONNX_CPU"
+    },
+    {
+      "step": "reference_benchmark",
+      "status": "ok",
+      "runtime": "ONNX_CPU",
+      "p50_ms": 116.825,
+      "fps_model_only": 7.89
+    },
+    {
+      "step": "canonical_contract_semantics",
+      "status": "ok",
+      "boxes": 1827,
+      "would_differ": 908
+    },
+    {
+      "step": "build_engine_fp32",
+      "status": "ok",
+      "seconds": 54.06,
+      "engine_bytes": 80982948,
+      "engine_sha256": "7ca68400f45e3898",
+      "fp16": false
+    },
+    {
+      "step": "parity_fp32",
+      "status": "ok",
+      "matched": 24,
+      "of": 24,
+      "min_iou": 1.0,
+      "mean_iou": 1.0,
+      "max_confidence_delta": 0.0,
+      "passed": true
+    },
+    {
+      "step": "benchmark_fp32",
+      "status": "ok",
+      "p50_ms": 4.658,
+      "p95_ms": 6.479,
+      "mean_ms": 4.834,
+      "fps_model_only": 206.87
+    },
+    {
+      "step": "build_engine_fp16",
+      "status": "ok",
+      "seconds": 47.29,
+      "engine_bytes": 81084700,
+      "engine_sha256": "24937493e098ab9c",
+      "fp16": true
+    },
+    {
+      "step": "parity_fp16",
+      "status": "ok",
+      "matched": 24,
+      "of": 24,
+      "min_iou": 1.0,
+      "mean_iou": 1.0,
+      "max_confidence_delta": 0.0,
+      "passed": true
+    },
+    {
+      "step": "benchmark_fp16",
+      "status": "ok",
+      "p50_ms": 4.293,
+      "p95_ms": 5.59,
+      "mean_ms": 4.78,
+      "fps_model_only": 209.21
+    },
+    {
+      "step": "write_status_patch",
+      "status": "ok",
+      "authorised": true,
+      "verified_precisions": [
+        "fp16",
+        "fp32"
+      ],
+      "located": 8,
+      "of": 8
+    }
+  ],
+  "status_patch": {
+    "path": "status-patch.json",
+    "authorised": true,
+    "verified_precisions": [
+      "fp16",
+      "fp32"
+    ],
+    "edits_located": 8,
+    "edits_total": 8
+  },
+  "gpu_run_result": "GPU_RUN_RESULT.md",
+  "evidence_files": [
+    "GPU_RUN_RESULT.md",
+    "KAGGLE_GPU_RUN.md",
+    "benchmark.json",
+    "bundle-manifest.json",
+    "colab_gpu_verify.ipynb",
+    "contract-semantics.json",
+    "environment.json",
+    "parity_fp16.json",
+    "parity_fp32.json",
+    "samples.json",
+    "status-patch.json",
+    "tensorrt-verification.json"
+  ]
+}

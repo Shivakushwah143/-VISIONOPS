@@ -1,6 +1,6 @@
 # Start here
 
-This is an **incomplete implementation release**, not an end-to-end verified platform. Read `docs/KNOWN_LIMITATIONS.md` before deployment. Actual runtime evidence covers the synthetic CPU plumbing, outbox, signature/archive rejection, backend liveness/metrics and frontend HTTP startup/build. PostgreSQL-backed journeys, real PPE inference, fleet campaigns and NVIDIA inference were not verified.
+This is an **incomplete implementation release**, not an end-to-end verified platform. Read [docs/CURRENT_VERIFIED_STATE.md](docs/CURRENT_VERIFIED_STATE.md) first — it lists, defect by defect, what was verified, what is implemented but unverified, what is blocked by hardware or data, and what is not implemented — then `docs/KNOWN_LIMITATIONS.md` before deployment. Actual runtime evidence covers the synthetic CPU plumbing, real PPE CPU inference through the canonical contract, tracking, deterministic temporal rules, the outbox, signature/archive rejection, backend liveness/metrics and frontend HTTP startup/build. **NVIDIA inference is now verified too** — TensorRT FP32 and a true mixed-FP16 engine on a real Tesla T4 — but on an external GPU host, not this machine: see [docs/evidence/tensorrt/final](docs/evidence/tensorrt/final/README.md) and [docs/interview/11_VERIFIED_VS_UNVERIFIED.md](docs/interview/11_VERIFIED_VS_UNVERIFIED.md). On this development host there is still no NVIDIA runtime at all. PostgreSQL-backed journeys, live RTSP, WebSocket delivery and fleet campaigns remain unverified here.
 
 ## Shortest launch route on a Docker-capable host
 
@@ -86,9 +86,43 @@ For independent plumbing verification, run:
 .venv/bin/python -m scripts.verify_components
 .venv/bin/python -m scripts.verify_security
 .venv/bin/python -m scripts.verify_runtime
+# Edge/ML platform (no database, no GPU required):
+.venv/bin/python -m scripts.verify_model_contract
+.venv/bin/python -m scripts.verify_edge_platform
 ```
 
+`verify_model_contract` proves the CPU adapter and the NVIDIA parser share one canonical
+contract (and checks an independent decoder against it). `verify_edge_platform` exercises
+inference runtimes, telemetry, hardware profiles, video backends, RTSP reconnection,
+temporal analyzers and a real `Detector → ByteTrack → zone dwell → outbox` run, writing
+`docs/evidence/edge-platform-runtime.json`. Neither needs PostgreSQL, Docker, a camera or
+a GPU; both report absent hardware as absent.
+
 `verify_components` generates labeled-as-synthetic engineering media and a constant-output ONNX fixture in a temporary directory. It is not a real-PPE demonstration. `verify_runtime` requires installed frontend dependencies (`cd frontend && npm ci`) and records database readiness as BLOCKED when PostgreSQL is unavailable.
+
+## Local RTSP and export journeys
+
+```bash
+docker compose -f infrastructure/compose.rtsp.yaml up -d mediamtx
+.venv/bin/python -m scripts.publish_rtsp --video var/media/ppe-2.mp4 --url rtsp://localhost:8554/live
+# then set VISIONOPS_VIDEO_BACKEND=opencv|gstreamer|auto for the edge worker
+```
+
+Full detail and the verified/unverified boundary: `docs/LOCAL_RTSP.md`.
+
+```bash
+.venv/bin/python -m scripts.export_onnx --checkpoint var/tools/hansung-best.pt \
+    --output var/model/hansung-export.onnx --report docs/evidence/onnx-export-parity.json
+```
+
+Export is never self-approving: the command fails unless raw PyTorch and raw ONNX
+tensors agree through the same decoder at both the operating and a low stress threshold.
+ARM64/Jetson targets: `docs/JETSON_DEPLOYMENT_TARGET.md` (no physical hardware here). Physical
+Jetson qualification is prepared as one bundle with one command — `scripts/make_jetson_bundle.py`
+builds it, `RUN_ON_JETSON.md` is what the operator follows, and the gate refuses non-Jetson hosts
+with exit 3. Nothing in it is verified until a real device returns its evidence ZIP.
+Rollback paths and their failure experiments: `docs/ROLLBACK_STRATEGY.md`.
+Logical fleet scale driver: `simulation/fleet_scale.py` + `docs/10K_FLEET_SCALING_REPORT.md`.
 
 ## Native frontend/backend development
 

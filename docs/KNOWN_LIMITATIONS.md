@@ -1,12 +1,30 @@
 # Known limitations and release decision
 
+> **Continuation update.** The authoritative, defect-by-defect status now lives in
+> [CURRENT_VERIFIED_STATE.md](CURRENT_VERIFIED_STATE.md). Sections below that predate it
+> are kept for history. Newly verified here: one canonical model contract shared by CPU
+> and NVIDIA paths (with an independent decoder cross-check), the runtime abstraction with
+> fail-closed capability detection, video backends and RTSP reconnect, deterministic
+> temporal analyzers, truthful hardware telemetry, the hardware-profile matrix, and
+> PyTorch→ONNX graph parity (24/24 operating, 159/159 stress, min IoU 1.0). Newly added
+> but **not runtime verified**: WebSocket events, GStreamer/MediaMTX, DeepStream runtime,
+> campaign reason codes, release-bundle identity, the 10K logical fleet driver and the DVC
+> stages. **NEWLY VERIFIED ON REAL NVIDIA HARDWARE:** TensorRT FP32 and a true ModelOpt
+> mixed-FP16 engine on a Tesla T4, both parity-checked through the canonical decoder
+> ([evidence](evidence/tensorrt/final/README.md)). This host still has no NVIDIA runtime.
+> Still **BLOCKED**: physical Jetson, ARM64 execution, model quality (no labeled dataset),
+> ONNX Runtime CUDA, and any GPU memory/utilization or fleet measurement.
+
 **Release decision: NOT IMPLEMENTED — the complete requested P0 platform remains incomplete.** This is an audited source handoff with verified components. It is not a successfully deployed or end-to-end verified release. Environment blockers and unfinished software are listed separately; neither is hidden behind a successful build.
 
 ## Environment blockers
 
 - **RESOLVED (partially):** PostgreSQL runtime. Docker Compose is now available and the stack runs (PostgreSQL 16.11, backend, MLflow, frontend, Prometheus, Grafana). Migrations are applied, the 31-table schema is live, and authenticated role, enrollment, device desired/actual state, event ingest and API read-back journeys were exercised end to end. Central storage was never replaced with SQLite. Campaign transactions and central rollback remain unexercised.
 - **PARTIALLY RESOLVED:** Real PPE artifact. The previously pinned Hexmon artifact is still unavailable, but a different real PPE detector was obtained, qualified and exercised: Hansung-Cho/yolov8-ppe-detection (YOLOv8n, MIT) → `var/model/hansung-p3.onnx`. Real inference, taxonomy geometry, PT↔ONNX parity and CPU performance are now verified. **Still BLOCKED:** model-quality evaluation — no labeled PPE dataset, ground truth, AP/mAP or temporal event-quality measurement exists, so the server-owned real promotion gate cannot pass and no `real`-mode release may be approved.
-- **BLOCKED:** NVIDIA hardware/runtime. No GPU nodes, NVIDIA tools, CUDA, TensorRT or DeepStream were detected. No GPU numbers or engine files exist in this release.
+- **PARTIALLY RESOLVED:** NVIDIA hardware/runtime. The TensorRT runtime is now verified on an external **Tesla T4** (TensorRT 11.3.0.99): FP32 and a true ModelOpt mixed-FP16 engine, both parity-checked against a reference runtime through the canonical decoder, with no engine file committed (engines are hardware-specific and were deleted after measuring). No GPU memory, utilization, power or TOPS figure was measured, so none is reported. **Still BLOCKED here:** this development host has no GPU node, no `nvidia-smi`, no CUDA and no TensorRT, and physical Jetson / JetPack / ARM64 execution / DeepStream runtime remain unverified.
+- **RESOLVED (source defect):** the DeepStream parser and `nvinfer.txt` asserted a 3-class / 7-channel tensor while the qualified artifact is 10-class / 14-channel. Both are now generated from `shared/model_contract.py` and checked by `scripts/verify_model_contract`.
+- **RESOLVED (source defect):** the edge agent accepted only `cpu_onnx_x86_64` on x86_64/AMD64. `shared/hardware_profiles.py` now provides an explicit matrix with reason codes and an explicitly marked simulated-target path.
+- **RESOLVED (dead code):** `shared/model_contract.py` was imported by nothing and the CPU adapter had its own decoder. The CPU adapter now decodes exclusively through the shared module.
 - **PARTIALLY RESOLVED:** Full Compose service qualification. PostgreSQL, MLflow, frontend, Prometheus and Grafana are running; the Prometheus target is `up` and the Grafana dashboard loads. Remaining: image tags are still not digest-frozen, the controller service was not exercised, and native verification used Python 3.12.13/3.12.14 on Windows while the container stack retains its own Python/Node versions.
 
 ## Incomplete software, independent of those blockers

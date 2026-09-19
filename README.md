@@ -1,6 +1,22 @@
 # Industrial VisionOps Platform
 
-An implementation in progress for industrial PPE evidence and edge-fleet operations. **Not end-to-end verified and not production-ready.** Start with [START_HERE.md](START_HERE.md).
+An implementation in progress for industrial PPE evidence and edge-fleet operations. **Not end-to-end verified and not production-ready.** Start with [docs/CURRENT_VERIFIED_STATE.md](docs/CURRENT_VERIFIED_STATE.md), then [START_HERE.md](START_HERE.md).
+
+## Continuation: unified model contract, video/temporal/runtime platform
+
+The audit in [docs/CURRENT_VERIFIED_STATE.md](docs/CURRENT_VERIFIED_STATE.md) records what was actually implemented, what was stale and what was dead code. The most important correction: the NVIDIA/DeepStream parser asserted a **3-class / 7-channel** tensor while the qualified artifact is **10-class / 14-channel**, and `shared/model_contract.py` existed but nothing imported it. Both paths now decode through that one module — the parser, `nvinfer.txt` and the metadata bridge are *generated* from it (`scripts/gen_deepstream_contract.py`).
+
+Added and locally verified here (see `docs/evidence/`):
+
+* `scripts/verify_model_contract` — generated NVIDIA contract consistency, the qualified mapping, and an *independent* decoder agreeing with the canonical one to delta 0.0 on real frames.
+* `scripts/verify_edge_platform` — inference runtimes with fail-closed capability detection, truthful CPU/GPU telemetry, the hardware-profile matrix, OpenCV/GStreamer video sources, RTSP reconnect with bounded backoff, deterministic temporal analyzers, and a real end-to-end run (`Detector → ByteTrack → zone dwell → SQLite outbox`, p50 96.8 ms / p95 194.6 ms CPU).
+* `scripts/export_onnx` — PyTorch → ONNX export with two-threshold graph parity (24/24 operating, 159/159 stress, min IoU 1.0).
+
+TensorRT moved out of that list. It was executed on a real **Tesla T4** (driver 580.82.07, CUDA 12.8, TensorRT 11.3.0.99): TensorRT FP32 preserved all 24 reference detections at IoU **1.0** (p50 4.658 ms, mean 4.834 ms, 206.87 model-only FPS), and a ModelOpt mixed-FP16 graph was qualified separately (min IoU 0.9922, p50 9.016 ms, mean 9.1 ms, 109.89 model-only FPS). FP16 was **slower** than FP32 for this graph on this GPU — reported as measured, with no cause asserted. Evidence: [docs/evidence/tensorrt/final](docs/evidence/tensorrt/final/README.md). Physical Jetson, ARM64 execution, DeepStream runtime and any physical 10K fleet remain **NOT VERIFIED**, and this machine still has no NVIDIA runtime, which is why `docs/evidence/tensorrt/blocked.json` also exists.
+
+The physical-Jetson gap is now one uploadable file with one command. `scripts/make_jetson_bundle.py` builds `var/bundle/visionops-jetson-validation.zip` (15.2 MB, 222 entries) carrying the qualified FP32 ONNX, six real qualification frames, the sample clip, the repository code and `requirements-jetson.txt`; the archive is audited after writing (221/221 declared hashes re-derived, 0 `.engine`/`.plan` present, 0 secret findings). On a real Orin the whole qualification is `unzip … && cd … && ./run_jetson_validation.sh`, producing `visionops-jetson-evidence.zip` and a `status-patch.json` that names exactly which claims the evidence authorises. The gate was executed here and returns exit **3** `BLOCKED_NOT_PHYSICAL_JETSON` — and it still does, because preparation is not verification. See [RUN_ON_JETSON.md](RUN_ON_JETSON.md), [docs/JETSON_DEPLOYMENT_TARGET.md](docs/JETSON_DEPLOYMENT_TARGET.md) and [docs/evidence/jetson/](docs/evidence/jetson/README.md).
+
+Added and **implemented but not runtime verified** (no FastAPI/PostgreSQL/RTSP/GStreamer on this host): the WebSocket event bus, the GStreamer backend and local MediaMTX environment, campaign gate reason codes, release-bundle identity, the 10K logical fleet driver and the DVC/MLflow stages. New documents: [JETSON_DEPLOYMENT_TARGET](docs/JETSON_DEPLOYMENT_TARGET.md), [ROLLBACK_STRATEGY](docs/ROLLBACK_STRATEGY.md), [LOCAL_RTSP](docs/LOCAL_RTSP.md), [10K_FLEET_SCALING_REPORT](docs/10K_FLEET_SCALING_REPORT.md), [11_VERIFIED_VS_UNVERIFIED](docs/interview/11_VERIFIED_VS_UNVERIFIED.md).
 
 The archive contains actual React/Vite/Tailwind, FastAPI/SQLAlchemy/PostgreSQL, ONNX Runtime/OpenCV/ByteTrack, durable SQLite edge state, signed artifacts, campaign/controller, simulation and model-lifecycle source. It includes all 22 authoritative specification documents unchanged under `docs/specification/`.
 
@@ -11,3 +27,7 @@ PostgreSQL startup was blocked by this host's OS restrictions; Docker was absent
 Use the evidence JSON files and [verification report](docs/VERIFICATION_REPORT.md) to distinguish runtime results from code presence. No physical fleet, GPU performance or live dashboard metrics are fabricated.
 
 Continuation: rollback leasing and post-commit watchdog components now passed real execution checks. Raw evaluation recomputation, persisted per-camera metric export and a standalone NVIDIA launcher were added. Full PostgreSQL/fleet/real-PPE qualification remains blocked and no complete release approval is claimed.
+
+Continuation 2: the CPU and NVIDIA inference paths share one canonical model contract, and that contract, the runtime abstraction, video backends, temporal analyzers, hardware telemetry and hardware-profile matrix were executed and measured locally. See [docs/CURRENT_VERIFIED_STATE.md](docs/CURRENT_VERIFIED_STATE.md).
+
+Continuation 3 (NVIDIA qualification): the TensorRT path was verified on real NVIDIA hardware — FP32 and a true ModelOpt mixed-FP16 engine, both parity-checked against a reference runtime through the same canonical decoder, on the qualified artifact (`b239aa7e…`). Precision claims are now checked against the engine's own tensor dtypes, so a `fp16` label over an FP32 graph can no longer be recorded as verified; the earlier mislabelled run is preserved and marked superseded instead of deleted. Physical Jetson, JetPack, ARM64 execution, DeepStream runtime, 10K fleet numbers, GPU memory/utilization and model-quality results are still not produced, and are reported as absent rather than estimated. See [docs/interview/11_VERIFIED_VS_UNVERIFIED.md](docs/interview/11_VERIFIED_VS_UNVERIFIED.md).

@@ -1,0 +1,20 @@
+{
+  "evidence_set": "visionops TensorRT NVIDIA GPU qualification",
+  "source_archive": "visionops-tensorrt-final-evidence.zip",
+  "source_archive_sha256": "3039335e34c98bd15260714beedf60cdcbe464f9147f5bfc5e81868cf79c047a",
+  "source_archive_bytes": 44187,
+  "source_archive_integrity": "unzip -t -> No errors detected",
+  "imported_at_utc": "2026-09-18T11:05:00+00:00",
+  "imported_by": "manual handoff from the GPU session; no local CPU number was substituted",
+  "integration_note": "Files under final/ are byte-for-byte copies of the GPU session output. Nothing in final/ was edited, re-derived or re-run locally; only the directory names were normalised and the superseded record was moved out of the authoritative path.",
+  "verification_of_this_import": [
+    "every file under final/ hashes equal to the corresponding member of the source archive",
+    "the qualified ONNX the runs consumed matches var/model/hansung-p3.onnx (sha256 b239aa7e...)",
+    "no engine binary, model copy or credential is included under final/"
+  ],
+  "local_host_contrast": {
+    "note": "the local development host has no NVIDIA runtime at all; environment.json in this directory is the LOCAL host snapshot, final/fp32/environment.json is the GPU host snapshot",
+    "local_environment": "docs/evidence/tensorrt/environment.json",
+    "local_blocker": "docs/evidence/tensorrt/blocked.json"
+  }
+}

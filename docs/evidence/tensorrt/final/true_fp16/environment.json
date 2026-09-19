@@ -1,0 +1,117 @@
+{
+  "captured_at": "2026-09-18T10:54:50.319288+00:00",
+  "host": {
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "python": "3.13.15"
+  },
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "gpu_names": [
+    "Tesla T4"
+  ],
+  "nvidia_smi_query": "Tesla T4, 580.82.07, 15360 MiB, 7.5",
+  "nvidia_smi": {
+    "present": true,
+    "gpu_detected": true,
+    "reason": "ok",
+    "gpu_names": [
+      "Tesla T4"
+    ]
+  },
+  "onnxruntime_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "driver": "580.82.07",
+  "cuda": "12.8",
+  "tensorrt": "11.3.0.99",
+  "torch": "2.11.0+cu128",
+  "onnxruntime": "1.24.4",
+  "gpu_vram": "15360 MiB",
+  "compute_capability": "7.5",
+  "torch_cuda_build": "12.8",
+  "torch_cuda_available": true,
+  "torch_device_name": "Tesla T4",
+  "torch_total_memory_bytes": 15637086208,
+  "torch_compute_capability": "7.5",
+  "capabilities": {
+    "ONNX_CPU": {
+      "available": true,
+      "status": "VERIFIED",
+      "reason": null,
+      "providers": [
+        "TensorrtExecutionProvider",
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ]
+    },
+    "ONNX_CUDA": {
+      "available": true,
+      "status": "AVAILABLE - NOT QUALIFIED LOCALLY",
+      "reason": null,
+      "providers": [
+        "TensorrtExecutionProvider",
+        "CUDAExecutionProvider",
+        "CPUExecutionProvider"
+      ]
+    },
+    "TENSORRT": {
+      "available": true,
+      "status": "AVAILABLE - NOT QUALIFIED LOCALLY",
+      "reason": null,
+      "tensorrt_module": true,
+      "tensorrt_execution_provider": true
+    },
+    "DEEPSTREAM": {
+      "available": false,
+      "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+      "reason": "deepstream_or_pyds_unavailable",
+      "sdk_root_present": false,
+      "pyds_importable": false
+    },
+    "gpu_metrics_available": true
+  },
+  "git": {
+    "commit": null,
+    "working_tree": "clean"
+  },
+  "onnx_sha256": "a74ec6b384c93b2d0bd5d99b3fcc1399712ffee479e9b490c2cda276e1cbea58",
+  "onnx_bytes": 6215909,
+  "contract": {
+    "profile": "hansung_ppe_yolov8n_10",
+    "source_index_to_canonical": {
+      "0": 1,
+      "2": 2,
+      "5": 0
+    },
+    "source_classes": {
+      "0": "Hardhat",
+      "1": "Mask",
+      "2": "NO-Hardhat",
+      "3": "NO-Mask",
+      "4": "NO-Safety Vest",
+      "5": "Person",
+      "6": "Safety Cone",
+      "7": "Safety Vest",
+      "8": "machinery",
+      "9": "vehicle"
+    },
+    "input_shape": [
+      640,
+      640
+    ],
+    "source_count": 10,
+    "raw_channels": 14,
+    "score_threshold": 0.35,
+    "nms_iou": 0.5,
+    "canonical_classes": {
+      "0": "person",
+      "1": "helmet",
+      "2": "no_helmet"
+    }
+  },
+  "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+}

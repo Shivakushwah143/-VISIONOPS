@@ -1,12 +1,19 @@
 # Requirements traceability
 
+> **Continuation 2 update.** R03 gains a static+CPU contract guarantee (one canonical
+> contract, generated NVIDIA artifacts, independent decoder agreement) while the NVIDIA
+> runtime stays BLOCKED. R10 gains executed video/stream/telemetry metrics. R13 gains
+> `scripts/export_onnx` (export is never self-approving). R09/R08 keep their blockers but
+> now have a logical-fleet driver. Full mapping of the change to the four status labels:
+> [CURRENT_VERIFIED_STATE.md](CURRENT_VERIFIED_STATE.md).
+
 No complete AC01–AC23 criterion is marked VERIFIED. Component evidence is narrower than the acceptance criteria and must not be promoted to an end-to-end claim.
 
 | Requirement | Implementation | Acceptance | Status and evidence boundary |
 | --- | --- | --- | --- |
 | R01 Authentication / roles | backend security/main, frontend login | AC01 | BLOCKED: PostgreSQL-backed role/session journeys; code exists |
 | R02 Sites / cameras / sources | source APIs, ConfigVersion, console forms | AC02 | BLOCKED: persistence and source editing journeys |
-| R03 Real inference / tracking | edge pipeline, ByteTrack, NVIDIA adapter files | AC03, AC22 | VERIFIED (CPU): real Hansung PPE ONNX through Detector → ByteTrack → PPE association on real footage, 3 tracks over 206 frames, PT↔ONNX parity 24/24. NVIDIA path still BLOCKED: no hardware |
+| R03 Real inference / tracking | edge pipeline, ByteTrack, NVIDIA adapter files | AC03, AC22 | VERIFIED (CPU): real Hansung PPE ONNX through Detector → ByteTrack → PPE association on real footage, 3 tracks over 206 frames, PT↔ONNX parity 24/24. VERIFIED (TensorRT, real NVIDIA GPU): FP32 24/24 at IoU 1.0 and true mixed FP16 24/24 at min IoU 0.9922 on a Tesla T4 — `docs/evidence/tensorrt/final/`. DeepStream runtime and physical Jetson remain unverified |
 | R04 Deterministic safety events | edge rules/state, backend event APIs, Events UI | AC04, AC05 | VERIFIED (backend path): real-video rule result is a correct negative case (0 violations), plus a labelled transport event through outbox → `POST /device-events` → PostgreSQL → API read-back with duplicate and outage recovery. Console/UI journey unverified |
 | R05 Device control | enrollment, heartbeat, assignment ledger, fleet UI | AC06, AC07 | VERIFIED (single device): enrollment, signed manifest fetch, hash-verified artifact staging, desired/actual convergence and heartbeat reporting. Fleet-scale and console journeys unverified |
 | R06 Edge durability / updates | state, agent, worker | AC08, AC13 | IMPLEMENTED — NOT RUNTIME VERIFIED: connected WAN/update journey; watchdog component VERIFIED; full recovery/preview journey unverified |

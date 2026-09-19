@@ -1,0 +1,56 @@
+# Python dependencies for the PHYSICAL JETSON qualification run only.
+#
+#   ./run_jetson_validation.sh          # or, by hand:
+#   python3 -m scripts.verify_physical_jetson --bundle-root . --samples samples \
+#       --video samples/ppe.mp4 --precisions fp32,fp16 --iterations 100 \
+#       --sustained-seconds 300 --out evidence/jetson
+#
+# ============================================================================
+# READ THIS BEFORE INSTALLING ANYTHING ON A JETSON
+# ============================================================================
+# A Jetson's CUDA, cuDNN and TensorRT come from JetPack and are built against the
+# device's L4T kernel and the SoC's ISA. They are NOT interchangeable with desktop
+# or datacenter wheels, and pip cannot repair a mismatch it created.
+#
+#   DO NOT RUN
+#       pip install --upgrade tensorrt
+#       pip install nvidia-tensorrt
+#       pip install nvidia-cudnn-cu12  /  any nvidia-*-cuXX wheel
+#       pip install torch  (on ARM64 this pulls CPU-only or a wrong-CUDA wheel)
+#       pip install onnxruntime-gpu
+#
+# Every NVIDIA component below is therefore either absent by design or optional and
+# guarded. `run_jetson_validation.sh` installs only the application-level names in
+# REQUIRE_ITEMS-equivalent form and stops with a printed blocker if an NVIDIA import
+# is missing, instead of trying to fill the gap from PyPI.
+#
+# This file is documentation of intent as well as a pip input. `run_jetson_validation.sh`
+# reads ONLY the names under [application] so a stray edit here cannot cause an
+# NVIDIA package to be installed.
+#
+# [application] - safe to install into a venv on Jetson
+onnx>=1.15
+numpy>=1.24
+opencv-python-headless>=4.8
+supervision>=0.20
+
+# [provided-by-jetpack] - MUST already be importable; verified, never installed
+#   tensorrt        from JetPack (verify_jetson_tensorrt reports the real version)
+#   torch           use NVIDIA's l4t wheel index, i.e.
+#                     pip3 install --index-url https://pypi.jetson-ai-lab.dev/jp6/cu126 torch
+#                   and only if you actually need the PyTorch reference path
+#   pycuda          only if a CUDA-stream path needs it; the harness uses torch.cuda
+#   cuda-python     only if the host already ships it
+#
+# [optional]
+#   onnxruntime-gpu is deliberately NOT listed. On Jetson it is a trap: the ARM64
+#   wheel is not published for every JetPack release, and an install that half
+#   succeeds leaves a CPU-only runtime wearing a GPU name. The qualification run
+#   does not need it - the parity reference is the ONNX Runtime CPU path, and any
+#   ONNX CUDA provider found is only trusted after edge.runtimes.check_provider
+#   performs a real session + inference (AVAILABLE / LOAD_FAILED / VERIFIED / UNAVAILABLE).
+#
+#   nvidia-modelopt is needed ONLY to regenerate the true mixed-FP16 ONNX on-device.
+#   If `model/hansung-p3-fp16.onnx` is already in the bundle (or produced on this
+#   device), skip it entirely.
+# nvidia-modelopt>=0.46

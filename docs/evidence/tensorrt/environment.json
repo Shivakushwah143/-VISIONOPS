@@ -1,0 +1,73 @@
+{
+  "captured_at": "2026-09-18T12:09:13.318960+00:00",
+  "host": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64",
+    "python": "3.12.13"
+  },
+  "python": "3.12.13 (main, Jun 11 2026, 04:05:29) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "AMD64",
+  "gpu_names": [],
+  "nvidia_smi_query": null,
+  "nvidia_smi": {
+    "present": false,
+    "gpu_detected": false,
+    "reason": "nvidia-smi_not_found",
+    "gpu_names": []
+  },
+  "onnxruntime_providers": [
+    "AzureExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "driver": null,
+  "cuda": null,
+  "tensorrt": "unavailable: ModuleNotFoundError",
+  "torch": "2.14.0+cpu",
+  "onnxruntime": "1.30.0",
+  "torch_cuda_build": null,
+  "torch_cuda_available": false,
+  "capabilities": {
+    "ONNX_CPU": {
+      "available": true,
+      "status": "VERIFIED",
+      "reason": null,
+      "providers": [
+        "AzureExecutionProvider",
+        "CPUExecutionProvider"
+      ]
+    },
+    "ONNX_CUDA": {
+      "available": false,
+      "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+      "reason": "gpu_not_detected",
+      "provider_state": "UNAVAILABLE",
+      "provider_probe": null,
+      "providers": [
+        "AzureExecutionProvider",
+        "CPUExecutionProvider"
+      ]
+    },
+    "TENSORRT": {
+      "available": false,
+      "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+      "reason": "tensorrt_module_not_installed",
+      "provider_state": "UNAVAILABLE",
+      "provider_probe": null,
+      "tensorrt_module": false,
+      "tensorrt_execution_provider": false
+    },
+    "DEEPSTREAM": {
+      "available": false,
+      "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+      "reason": "deepstream_or_pyds_unavailable",
+      "sdk_root_present": false,
+      "pyds_importable": false
+    },
+    "gpu_metrics_available": false
+  },
+  "git": {
+    "commit": "5f391d25999114c0731b7a86a3837af894129caa",
+    "working_tree": "dirty"
+  }
+}

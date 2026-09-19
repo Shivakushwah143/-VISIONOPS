@@ -1,9 +1,12 @@
 """Persistent campaign controller: unknown telemetry never passes a gate."""
 import math
 from .main import *
+from . import events
 from .permits import allocate
 def timeline(db,c,event,reason,actor='controller',device_id=None):
     db.add(DeploymentEvent(deployment_campaign_id=c.deployment_campaign_id,device_id=device_id,actor_type='system' if actor=='controller' else 'user',actor_id=actor,event_type=event,reason=reason,before_state={},after_state={'status':c.status,'ring':c.current_ring},evidence={}))
+    # Realtime notification is commit-gated: a failed transition never reaches the browser.
+    events.bus.publish_on_commit(db,'campaign.status_changed',{'deployment_campaign_id':c.deployment_campaign_id,'status':c.status,'current_ring':c.current_ring,'change':event,'reason':reason,'device_id':device_id})
 def aggregate(db,d,since):
     rows=list(db.scalars(select(Metric).where(Metric.device_id==d.device_id,Metric.received_at>=since,Metric.release_id==d.actual_release_id).order_by(Metric.received_at)))
     samples=[float(x) for r in rows for x in r.values.get('inference_latency_ms',[])]
@@ -13,6 +16,66 @@ def aggregate(db,d,since):
     if any((b.window_start-a.window_end).total_seconds()>30 for a,b in zip(rows,rows[1:])):return None
     samples.sort()
     return {'p95':samples[math.ceil(.95*len(samples))-1],'fps':sum(fps)/len(fps),'samples':len(samples),'restarts':sum(r.values.get('restart_count',0) for r in rows),'first':rows[0].window_start.isoformat(),'last':rows[-1].received_at.isoformat(),'duration':(rows[-1].window_end-rows[0].window_start).total_seconds()}
+# Machine-readable gate reason codes. Campaign pause/rollback must explain WHY.
+REASON_CODES={
+ 'HEARTBEAT_STALE':'No heartbeat within the freshness window; device telemetry is unknown',
+ 'LOW_FPS':'Processed inference FPS is below the gate floor',
+ 'HIGH_LATENCY':'Inference p95 latency exceeds the gate ceiling',
+ 'MODEL_LOAD_FAILURE':'Candidate model could not load or the agent reported a load error',
+ 'WORKER_CRASH_LOOP':'Worker restarted repeatedly during the observation window',
+ 'STREAM_UNHEALTHY':'Video source is not connected or is not decoding frames',
+ 'ARTIFACT_VERIFICATION_FAILED':'Device rejected the assigned artifact or generation',
+ 'QUEUE_PRESSURE':'Decoder queue is saturated; frames are being dropped',
+ 'RTSP_RECONNECTS':'The stream reconnected during the observation window',
+ 'OBSERVATION_INCOMPLETE':'Candidate observation window is not complete',
+ 'NO_TELEMETRY':'No persisted observation window exists for the assigned release',
+}
+DEFAULT_LIMITS={'min_fps':5.0,'max_p95_ms':200.0,'max_queue_depth':2.0,'max_restarts':0}
+GATE_FAILURES={'MODEL_LOAD_FAILURE','WORKER_CRASH_LOOP','ARTIFACT_VERIFICATION_FAILED','STREAM_UNHEALTHY','HEARTBEAT_STALE'}
+
+def signals(db,d,since):
+    """Per-device health signals for the ring gate.
+
+    GPU metrics participate only when the device actually reported them; an
+    absent GPU value is unknown, never a healthy zero.
+    """
+    codes=[];detail={}
+    heartbeat=db.scalar(select(Heartbeat).where(Heartbeat.device_id==d.device_id).order_by(Heartbeat.received_at.desc()))
+    fresh=d.last_heartbeat_at is not None and (now()-d.last_heartbeat_at).total_seconds()<=30
+    if not fresh:codes.append('HEARTBEAT_STALE')
+    if heartbeat:
+        if heartbeat.rejected_generation is not None and heartbeat.rejected_generation==d.applied_generation:codes.append('ARTIFACT_VERIFICATION_FAILED')
+        if d.agent_state in ('degraded','rolling_back') or (heartbeat.last_error_code or '').lower().find('model')>=0:codes.append('MODEL_LOAD_FAILURE')
+    rows=list(db.scalars(select(Metric).where(Metric.device_id==d.device_id,Metric.received_at>=since,Metric.release_id==d.actual_release_id).order_by(Metric.received_at)))
+    if not rows:
+        codes.append('NO_TELEMETRY');return sorted(set(codes)),detail
+    samples=sorted(float(x) for r in rows for x in r.values.get('inference_latency_ms',[]))
+    if samples:
+        p95=samples[math.ceil(.95*len(samples))-1];detail['p95_ms']=p95
+        if p95>DEFAULT_LIMITS['max_p95_ms']:codes.append('HIGH_LATENCY')
+    restarts=sum(r.values.get('restart_count',0) for r in rows)
+    if restarts>DEFAULT_LIMITS['max_restarts']:
+        codes.append('WORKER_CRASH_LOOP');detail['restarts']=restarts
+    fps=[r.values.get('inference_fps') for r in rows if r.values.get('inference_fps') is not None]
+    if fps:
+        average=sum(fps)/len(fps);detail['inference_fps']=average
+        if average<DEFAULT_LIMITS['min_fps']:codes.append('LOW_FPS')
+    queues=[r.values.get('queue_depth') for r in rows if r.values.get('queue_depth') is not None]
+    if queues:
+        depth=max(queues);detail['queue_depth']=depth
+        if depth>DEFAULT_LIMITS['max_queue_depth']:codes.append('QUEUE_PRESSURE')
+    connectivity=[r.values.get('rtsp_connected') for r in rows if r.values.get('rtsp_connected') is not None]
+    decode=[r.values.get('decode_fps') for r in rows if r.values.get('decode_fps') is not None]
+    if connectivity and not any(connectivity):codes.append('STREAM_UNHEALTHY')
+    elif decode and max(decode)<=0:codes.append('STREAM_UNHEALTHY')
+    reconnects=[r.values.get('reconnect_count') for r in rows if r.values.get('reconnect_count') is not None]
+    if len(reconnects)>1 and reconnects[-1]>reconnects[0]:
+        codes.append('RTSP_RECONNECTS');detail['reconnects']=reconnects[-1]-reconnects[0]
+    gpu=[r.values.get('gpu_utilization_ratio') for r in rows if r.values.get('gpu_utilization_ratio') is not None]
+    # Recorded for transparency only. Absent GPU data stays unknown and gates nothing.
+    detail['gpu_metrics_available']=bool(gpu)
+    return sorted(set(codes)),detail
+
 def eligible(db,d,r):
     reasons=[]
     if d.mode!=r.evidence_mode or d.hardware_profile!=r.hardware_profile:reasons.append('incompatible_profile')
@@ -44,6 +107,8 @@ def assess(db,c):
     reasons=[];failed=False;converged=True
     for t in ts:
         d=get(db,Device,t.device_id)
+        codes,detail=signals(db,d,now()-timedelta(minutes=6))
+        t.gate_signals={'reason_codes':codes,**detail}
         if not d.last_heartbeat_at or (now()-d.last_heartbeat_at).total_seconds()>30:
             reasons.append('telemetry_stale');converged=False
             if not d.last_heartbeat_at or (now()-d.last_heartbeat_at).total_seconds()>60:failed=True
@@ -52,6 +117,9 @@ def assess(db,c):
         elif d.health_status!='healthy':converged=False;reasons.append('health_unknown')
         h=db.scalar(select(Heartbeat).where(Heartbeat.device_id==d.device_id).order_by(Heartbeat.received_at.desc()))
         if h and h.rejected_generation==t.assigned_generation:failed=True;reasons.append('generation_rejected');t.status='failed'
+        # Reason codes explain a pause/rollback; failure-class codes fail the ring immediately.
+        reasons.extend(code.lower() for code in codes)
+        if set(codes)&GATE_FAILURES:failed=True
     if not converged:
         c.observation_started_at=None
         if c.ring_started_at and (now()-c.ring_started_at).total_seconds()>600:failed=True;reasons.append('convergence_timeout')
@@ -59,7 +127,7 @@ def assess(db,c):
     if not c.observation_started_at:c.observation_started_at=now()
     for t in ts:
         d=get(db,Device,t.device_id);m=aggregate(db,d,c.observation_started_at)
-        if not m or m['samples']<100 or m['duration']<300:reasons.append('insufficient_observation');continue
+        if not m or m['samples']<100 or m['duration']<300:reasons.append('insufficient_observation');reasons.append('observation_incomplete');continue
         b=t.baseline_metrics
         if m['p95']>min(200,b['p95']*1.2) or m['fps']<max(5,b['fps']*.9) or m['restarts']>0:failed=True;reasons.append('performance_regression')
         t.status='healthy' if not failed else 'failed'
@@ -85,7 +153,7 @@ def campaign_detail(campaign_id:str,req:Request):
     with Session() as db:
         user(req,db);c=get(db,Campaign,campaign_id);status,reasons=assess(db,c) if c.status in ('running','paused') else ('waiting',[])
         ts=targets(db,c);counts={s:sum(t.status==s for t in ts) for s in set(t.status for t in ts)}
-        return out({'campaign':public(c),'counts':counts,'gate_status':status,'gate_reasons':reasons,'observed_at':now()})
+        return out({'campaign':public(c),'counts':counts,'gate_status':status,'gate_reasons':reasons,'reason_code_descriptions':REASON_CODES,'limits':DEFAULT_LIMITS,'target_signals':[{'device_id':t.device_id,'ring':t.ring,'status':t.status,'reason_codes':(getattr(t,'gate_signals',None) or {}).get('reason_codes',[]),'signals':getattr(t,'gate_signals',None) or {}} for t in ts],'observed_at':now()})
 @app.get('/api/v1/deployments/{campaign_id}/targets')
 def target_list(campaign_id:str,req:Request):
     with Session() as db:user(req,db);return {'data':[public(t) for t in targets(db,get(db,Campaign,campaign_id))],'page':{'next_cursor':None,'limit':200}}

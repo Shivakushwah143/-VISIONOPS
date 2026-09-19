@@ -1,0 +1,225 @@
+{
+  "status": "VERIFIED",
+  "checkpoint": "var\\tools\\hansung-best.pt",
+  "checkpoint_sha256": "2419700bbe3b8d38f9000655d9cf952a4bc93ef6c143baf8b49a0abde5d0760f",
+  "artifact": "var\\model\\hansung-export.onnx",
+  "artifact_sha256": "122ba47e9c1564427becda0cff4105279711749ebb8c741e39524e28220d8ddb",
+  "artifact_bytes": 12245975,
+  "matches_qualified_artifact_bytes": false,
+  "ops": {
+    "opset": 17,
+    "ir_version": 8,
+    "input_shape": [
+      640,
+      640
+    ],
+    "source_classes": 10,
+    "raw_channels": 14,
+    "contract_profile": "hansung_ppe_yolov8n_10",
+    "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+  },
+  "exporter": {
+    "torch": "2.14.0+cpu",
+    "onnx": "1.22.0",
+    "ultralytics": "8.4.152",
+    "export_seconds": 1.38
+  },
+  "parity_method": {
+    "definition": "same letterbox and normalization; the same canonical decoder on both raw tensors; match on IoU>=0.5 and same canonical class and |conf delta|<=0.05",
+    "max_raw_tensor_delta": 0.003067
+  },
+  "parity_operating_threshold": {
+    "threshold": 0.35,
+    "frames": [
+      {
+        "frame": 0,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 25,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 50,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 100,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 150,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 200,
+        "compared": 4,
+        "matched": 4,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "parity_stress_threshold": {
+    "threshold": 0.001,
+    "frames": [
+      {
+        "frame": 0,
+        "compared": 31,
+        "matched": 31,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 25,
+        "compared": 29,
+        "matched": 29,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 50,
+        "compared": 33,
+        "matched": 33,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 100,
+        "compared": 28,
+        "matched": 28,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 150,
+        "compared": 21,
+        "matched": 21,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      },
+      {
+        "frame": 200,
+        "compared": 17,
+        "matched": 17,
+        "unmatched": 0,
+        "onnx_only": 0,
+        "min_iou": 1.0,
+        "mean_iou": 1.0,
+        "max_confidence_delta": 0.0,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "adapter_vs_head_argmax": {
+    "note": "boxes whose top source class is one this contract discards; the canonical adapter re-scores the mapped subset, so these must be handled identically by every runtime. This is why the NVIDIA parser reuses the generated contract instead of the head argmax.",
+    "discarded_top_class_boxes": 24423
+  },
+  "frames": [
+    {
+      "frame": 0,
+      "operating_detections": 4,
+      "stress_detections": 31,
+      "discarded_head_classes": 3831
+    },
+    {
+      "frame": 25,
+      "operating_detections": 4,
+      "stress_detections": 29,
+      "discarded_head_classes": 3911
+    },
+    {
+      "frame": 50,
+      "operating_detections": 4,
+      "stress_detections": 33,
+      "discarded_head_classes": 4082
+    },
+    {
+      "frame": 100,
+      "operating_detections": 4,
+      "stress_detections": 28,
+      "discarded_head_classes": 4345
+    },
+    {
+      "frame": 150,
+      "operating_detections": 4,
+      "stress_detections": 21,
+      "discarded_head_classes": 4061
+    },
+    {
+      "frame": 200,
+      "operating_detections": 4,
+      "stress_detections": 17,
+      "discarded_head_classes": 4193
+    }
+  ],
+  "qualification": "parity_passed",
+  "model_quality": "NOT EVALUATED - requires a labeled dataset, mAP and temporal event metrics",
+  "release_approval": "NOT GRANTED - a signature and a passing evaluation report are still required",
+  "lineage": {
+    "dataset_version": null,
+    "code_commit": null
+  },
+  "measured_at": 1789713104
+}

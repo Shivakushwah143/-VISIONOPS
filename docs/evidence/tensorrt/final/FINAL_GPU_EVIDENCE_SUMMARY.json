@@ -1,0 +1,46 @@
+{
+  "hardware": {
+    "gpu": "Tesla T4",
+    "driver": "580.82.07",
+    "cuda": "12.8",
+    "tensorrt": "11.3.0.99"
+  },
+  "artifacts": {
+    "qualified_fp32_onnx_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "mixed_fp16_onnx_sha256": "a74ec6b384c93b2d0bd5d99b3fcc1399712ffee479e9b490c2cda276e1cbea58"
+  },
+  "fp32_tensorrt": {
+    "matched": "24/24",
+    "min_iou": 1.0,
+    "mean_iou": 1.0,
+    "max_confidence_delta": 0.0,
+    "p50_ms": 4.658,
+    "p95_ms": 6.479,
+    "mean_ms": 4.834,
+    "model_only_fps": 206.87
+  },
+  "fp32_vs_mixed_fp16_onnx": {
+    "matched": "24/24",
+    "min_iou": 0.9955,
+    "mean_iou": 0.9975,
+    "max_confidence_delta": 0.0009,
+    "max_box_delta_pixels": 0.6736,
+    "passed": true
+  },
+  "fp16_tensorrt": {
+    "matched": "24/24",
+    "min_iou": 0.9922,
+    "mean_iou": 0.9972,
+    "max_confidence_delta": 0.0015,
+    "p50_ms": 9.016,
+    "p95_ms": 9.434,
+    "mean_ms": 9.1,
+    "model_only_fps": 109.89
+  },
+  "not_verified": [
+    "physical NVIDIA Jetson",
+    "JetPack runtime on physical hardware",
+    "Jetson thermals/power/NVDEC",
+    "10K physical Jetson fleet"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "source": "/content/visionops_gpu/samples",
+  "count": 6,
+  "samples": [
+    {
+      "id": "frame-0000.jpg",
+      "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    {
+      "id": "frame-0025.jpg",
+      "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    {
+      "id": "frame-0050.jpg",
+      "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    {
+      "id": "frame-0100.jpg",
+      "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    {
+      "id": "frame-0150.jpg",
+      "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    },
+    {
+      "id": "frame-0200.jpg",
+      "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+      "shape": [
+        720,
+        1280,
+        3
+      ]
+    }
+  ],
+  "note": "each runtime preprocesses these exact inputs with the shared letterbox"
+}

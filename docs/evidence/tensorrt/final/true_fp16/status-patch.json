@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-09-18T10:57:53.631170+00:00",
+  "authorised": true,
+  "verified_precisions": [
+    "fp16"
+  ],
+  "status_line_to_set": "TensorRT on NVIDIA GPU: VERIFIED",
+  "hardware": {
+    "gpu": "Tesla T4",
+    "driver": "580.82.07",
+    "cuda": "12.8",
+    "tensorrt": "11.3.0.99",
+    "compute_capability": "7.5",
+    "framework": "CUDA GPU host (Colab/Kaggle class) - NOT a Jetson"
+  },
+  "model": {
+    "sha256": "a74ec6b384c93b2d0bd5d99b3fcc1399712ffee479e9b490c2cda276e1cbea58",
+    "input_shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "output_shape": [
+      1,
+      14,
+      8400
+    ]
+  },
+  "authorised_by": "docs/evidence/tensorrt/tensorrt-verification.json",
+  "edits": [
+    {
+      "file": "docs/CURRENT_VERIFIED_STATE.md",
+      "anchor": "| TensorRT runtime |",
+      "intent": "move the TensorRT runtime row out of \"IMPLEMENTED - NOT VERIFIED\" and cite this run",
+      "path_exists": true,
+      "line": 155,
+      "before": "| TensorRT runtime | `edge/runtimes.py` engine build/load/parity hooks (dtype-correct I/O buffers, TensorRT 10 `execute_async_v3` + `set_tensor_address`, optimisation profile for dynamic inputs), `planned_commands()`, `scripts/verify_tensorrt_gpu.py` | no TensorRT, no NVIDIA device on this host \u2014 see \u00a75.1 |",
+      "status": "located"
+    },
+    {
+      "file": "docs/CURRENT_VERIFIED_STATE.md",
+      "anchor": "* NVIDIA runtime verification:",
+      "intent": "keep the local-host limitation, and scope it to the local host only",
+      "path_exists": true,
+      "line": 166,
+      "before": "* NVIDIA runtime verification: no device node, driver, CUDA, cuDNN, TensorRT or",
+      "status": "located"
+    },
+    {
+      "file": "README.md",
+      "anchor": "Added and **implemented but not runtime verified**",
+      "intent": "state that the TensorRT runtime is now verified on an NVIDIA GPU",
+      "path_exists": true,
+      "line": 15,
+      "before": "Added and **implemented but not runtime verified** (no FastAPI/PostgreSQL/RTSP/GStreamer/NVIDIA on this host): the WebSocket event bus, the GStreamer backend and local MediaMTX environment, the TensorRT/DeepStream path, campaign gate reason codes, release-bundle identity, the 10K logical fleet driver and the DVC/MLflow stages. New documents: [JETSON_DEPLOYMENT_TARGET](docs/JETSON_DEPLOYMENT_TARGET",
+      "status": "located"
+    },
+    {
+      "file": "docs/VERIFICATION_REPORT.md",
+      "anchor": "| GStreamer backend, MediaMTX environment, TensorRT engine path",
+      "intent": "split the TensorRT engine path out of the unverified row",
+      "path_exists": true,
+      "line": 18,
+      "before": "| GStreamer backend, MediaMTX environment, TensorRT engine path, WebSocket delivery, 10K fleet numbers, ARM64 build | IMPLEMENTED \u2014 NOT VERIFIED / NOT PRODUCED | see CURRENT_VERIFIED_STATE.md |",
+      "status": "located"
+    },
+    {
+      "file": "docs/KNOWN_LIMITATIONS.md",
+      "anchor": "> but **not runtime verified**:",
+      "intent": "remove the TensorRT engine runtime from the local not-verified banner",
+      "path_exists": true,
+      "line": 10,
+      "before": "> but **not runtime verified**: WebSocket events, GStreamer/MediaMTX, TensorRT/DeepStream,",
+      "status": "located"
+    },
+    {
+      "file": "docs/BENCHMARK_REPORT.md",
+      "anchor": "NVIDIA/TensorRT benchmarks remain BLOCKED BY HARDWARE.",
+      "intent": "replace the blocked NVIDIA statement with the measured GPU benchmark table",
+      "path_exists": true,
+      "line": 10,
+      "before": "> claimed. NVIDIA/TensorRT benchmarks remain BLOCKED BY HARDWARE.",
+      "status": "located"
+    },
+    {
+      "file": "docs/JETSON_DEPLOYMENT_TARGET.md",
+      "anchor": "**no physical Jetson, ARM64 execution or TensorRT runtime was validated here**",
+      "intent": "keep Jetson unverified and name the GPU host that was validated instead",
+      "path_exists": true,
+      "line": 4,
+      "before": "**no physical Jetson, ARM64 execution or TensorRT runtime was validated here**.",
+      "status": "located"
+    },
+    {
+      "file": "docs/interview/TENSORRT_INTERVIEW_EVIDENCE.md",
+      "anchor": "TensorRT on NVIDIA GPU:",
+      "intent": "flip the one line the GPU run authorises",
+      "path_exists": true,
+      "line": 12,
+      "before": "TensorRT on NVIDIA GPU:               PENDING REAL GPU RUN (Colab or Kaggle session)",
+      "status": "located"
+    }
+  ],
+  "must_not_change": [
+    "Physical NVIDIA Jetson: NOT VERIFIED",
+    "JetPack on physical hardware: NOT VERIFIED",
+    "Jetson thermal / power / NVDEC behaviour: NOT VERIFIED",
+    "10K physical Jetson fleet: NOT VERIFIED",
+    "ARM64 runtime execution: NOT VERIFIED",
+    "model quality (mAP, no_helmet precision/recall, event precision/recall): BLOCKED BY DATA"
+  ],
+  "scope_note": "a Colab/Kaggle T4-class GPU is not a Jetson. Only \"TensorRT on NVIDIA GPU\" becomes VERIFIED; every claim about physical Jetson or ARM64 hardware stays NOT VERIFIED."
+}

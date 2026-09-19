@@ -208,6 +208,46 @@
           "refId": "A"
         }
       ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Decode vs processed FPS",
+      "description": "Absent when the device does not report the field; a gap is unknown, not zero.",
+      "gridPos": {"x": 0, "y": 48, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "visionops_camera_decode_fps", "legendFormat": "decode {{camera_id}}", "refId": "A"},
+        {"expr": "visionops_camera_processed_fps", "legendFormat": "processed {{camera_id}}", "refId": "B"}
+      ]
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Stream connectivity",
+      "description": "1 = connected and fresh; a missing series means the device did not report it.",
+      "gridPos": {"x": 12, "y": 48, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "visionops_camera_rtsp_connected", "refId": "A"}
+      ]
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "Stream age",
+      "gridPos": {"x": 0, "y": 56, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "visionops_camera_stream_age_seconds", "refId": "A"}
+      ]
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "Observation window p95 latency (reported)",
+      "description": "Only present when the device reports inference_latency_ms_p95. GPU families are absent by design when no GPU was measured.",
+      "gridPos": {"x": 12, "y": 56, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "visionops_camera_inference_latency_ms_p95", "refId": "A"}
+      ]
     }
   ]
 }

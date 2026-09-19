@@ -1,0 +1,282 @@
+{
+  "inference_runtimes": {
+    "cpu": {
+      "available": true,
+      "status": "VERIFIED",
+      "reason": null,
+      "providers": [
+        "AzureExecutionProvider",
+        "CPUExecutionProvider"
+      ]
+    },
+    "preferred": "ONNX_CPU",
+    "nvidia": [
+      {
+        "runtime": "ONNX_CUDA",
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "gpu_not_detected"
+      },
+      {
+        "runtime": "TENSORRT",
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "tensorrt_module_not_installed"
+      }
+    ],
+    "gpu_metrics_available": false,
+    "deepstream": {
+      "available": false,
+      "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+      "reason": "deepstream_or_pyds_unavailable",
+      "sdk_root_present": false,
+      "pyds_importable": false
+    },
+    "unavailable_runtimes_refused_to_load": true,
+    "device_nodes": []
+  },
+  "hardware_telemetry": {
+    "cpu_metrics_available": true,
+    "cpu_percent": 50.0,
+    "rss_bytes": 61136896,
+    "cpu_count": 4,
+    "gpu_metrics_available": false,
+    "gpu": null,
+    "gpu_providers_unavailable": [
+      {
+        "provider": "nvidia-smi",
+        "reason": "nvidia-smi_not_found"
+      },
+      {
+        "provider": "tegrastats",
+        "reason": "not_present"
+      }
+    ],
+    "heartbeat_gpu_utilization_ratio": null,
+    "tesla_probe_tegrastats_parse": {
+      "RAM": 1234,
+      "GR3D_FREQ": 41,
+      "ram_used_mb": 1234,
+      "ram_total_mb": 7920,
+      "gpu_utilization_percent": 41,
+      "cpu_core_utilization_percent": [
+        12,
+        null
+      ],
+      "cpu_core_frequency_mhz": [
+        1900,
+        null
+      ],
+      "cpu_online_cores": 1,
+      "cpu_utilization_percent": 12.0
+    }
+  },
+  "hardware_profiles": {
+    "local_environment": {
+      "architecture": "x86_64",
+      "machine": "AMD64",
+      "os": "Windows 11",
+      "simulated_hardware": false,
+      "declared_architecture": false,
+      "declared_versions": [],
+      "measured_versions": [],
+      "runtime_version": "1.30.0",
+      "runtime": "onnxruntime",
+      "capabilities": {
+        "ONNX_CPU": true,
+        "ONNX_CUDA": false,
+        "TENSORRT": false
+      }
+    },
+    "local_verdict": {
+      "profile": "cpu_onnx_x86_64",
+      "compatible": true,
+      "reasons": [],
+      "notices": [],
+      "simulated_hardware": false
+    },
+    "cpu_onnx_arm64_verdict": {
+      "profile": "cpu_onnx_arm64",
+      "compatible": false,
+      "reasons": [
+        "architecture_mismatch"
+      ],
+      "notices": [],
+      "simulated_hardware": false
+    },
+    "jetson_verdict": {
+      "profile": "nvidia_jetson_tensorrt_arm64",
+      "compatible": false,
+      "reasons": [
+        "architecture_mismatch",
+        "runtime_mismatch",
+        "missing_jetpack_version",
+        "missing_cuda_version",
+        "missing_tensorrt_version"
+      ],
+      "notices": [],
+      "simulated_hardware": false
+    },
+    "simulated_target": {
+      "environment": {
+        "architecture": "aarch64",
+        "machine": "AMD64",
+        "os": "Windows 11",
+        "simulated_hardware": true,
+        "declared_architecture": true,
+        "declared_versions": [
+          "cuda_version",
+          "jetpack_version",
+          "tensorrt_version"
+        ],
+        "measured_versions": [],
+        "runtime_version": "1.30.0",
+        "runtime": "onnxruntime",
+        "jetpack_version": "6.0",
+        "cuda_version": "12.2",
+        "tensorrt_version": "8.6",
+        "capabilities": {
+          "ONNX_CPU": true,
+          "ONNX_CUDA": false,
+          "TENSORRT": false
+        }
+      },
+      "verdict": {
+        "profile": "nvidia_jetson_tensorrt_arm64",
+        "compatible": true,
+        "reasons": [],
+        "notices": [
+          "runtime_not_present_on_simulation_host",
+          "declared_not_measured_jetpack_version",
+          "declared_not_measured_cuda_version",
+          "declared_not_measured_tensorrt_version"
+        ],
+        "simulated_hardware": true
+      }
+    },
+    "matrix_profiles": [
+      "cpu_onnx_arm64",
+      "cpu_onnx_x86_64",
+      "nvidia_jetson_orin_arm64",
+      "nvidia_jetson_tensorrt_arm64"
+    ]
+  },
+  "video_backends": {
+    "opencv_file_source": {
+      "status": "ended",
+      "backend": "opencv",
+      "decoded_frames_total": 60,
+      "input_fps": 10.0,
+      "decode_fps": 10.0,
+      "dropped_frames_total": 58,
+      "queue_depth": 2,
+      "queue_capacity": 2,
+      "stream_age_seconds": 0.0930000000007567,
+      "rtsp_connected": false,
+      "rtsp_reconnect_total": 0,
+      "last_frame_at": "2026-09-18T12:09:01.600712+00:00"
+    },
+    "gstreamer_available": false,
+    "selected_backend_default": "opencv",
+    "selected_backend_auto_rtsp": "opencv",
+    "documented_rtsp_pipeline": "rtspsrc location=rtsp://localhost:8554/live protocols=tcp latency=200 name=src ! rtph264depay ! h264parse ! avdec_h264 ! videoconvert ! video/x-raw,format=BGR ! appsink name=sink emit-signals=true max-buffers=2 drop=true sync=false",
+    "gstreamer_backend": {
+      "status": "IMPLEMENTED - NOT VERIFIED",
+      "refused_with": "gstreamer_bindings_unavailable"
+    }
+  },
+  "rtsp_resilience": {
+    "status": "VERIFIED (no RTSP server present; reconnect contract only)",
+    "endpoint": "rtsp://127.0.0.1:58616/live",
+    "reconnects_observed": 2,
+    "elapsed_seconds": 0.25,
+    "rtsp_connected": false,
+    "input_frames_total": 0,
+    "backoff": "bounded 1s..30s, reset after a decoding session",
+    "media_mtx_journey": "NOT RUN - no RTSP server available"
+  },
+  "temporal_analyzers": {
+    "ppe_sustained": {
+      "status": "VERIFIED",
+      "events": 1,
+      "supporting_frames": 5,
+      "span_seconds": 2.0,
+      "cooldown_enforced": true,
+      "helmet_produced_no_event": true
+    },
+    "restricted_zone_dwell": {
+      "status": "VERIFIED",
+      "event_type": "restricted_zone_dwell",
+      "zone_id": "z1",
+      "supporting_frames": 5,
+      "span_seconds": 1.0,
+      "cooldown_enforced": true,
+      "leave_and_reenter_restarts": true,
+      "loitering_event_type": "loitering"
+    },
+    "low_motion_heuristic": {
+      "status": "VERIFIED (deterministic heuristic, not a trained classifier)",
+      "static_track_events": 1,
+      "moving_track_events": 0,
+      "reason_code": "low_motion_heuristic"
+    },
+    "analyzer_configuration": {
+      "default": [
+        "ppe_sustained"
+      ],
+      "configured": [
+        "ppe_sustained",
+        "zone_dwell"
+      ],
+      "unknown_name_rejected": true
+    }
+  },
+  "pipeline_end_to_end": {
+    "status": "VERIFIED",
+    "artifact_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "profile": "hansung_ppe_yolov8n_10",
+    "runtime": "ONNX_CPU",
+    "inference_frames": 38,
+    "processed_fps": 3.98,
+    "latency_ms_p50": 97.174,
+    "latency_ms_p95": 167.609,
+    "dropped_frames": 168,
+    "temporal_analyzers": [
+      "ppe_sustained",
+      "zone_dwell"
+    ],
+    "durable_events": [
+      {
+        "event_type": "restricted_zone_dwell",
+        "track_id": "1",
+        "supporting_frames": 6,
+        "span_seconds": 1.079
+      },
+      {
+        "event_type": "restricted_zone_dwell",
+        "track_id": "2",
+        "supporting_frames": 6,
+        "span_seconds": 1.079
+      },
+      {
+        "event_type": "restricted_zone_dwell",
+        "track_id": "1",
+        "supporting_frames": 24,
+        "span_seconds": 5.156
+      },
+      {
+        "event_type": "restricted_zone_dwell",
+        "track_id": "2",
+        "supporting_frames": 24,
+        "span_seconds": 5.156
+      }
+    ],
+    "scope": "short functional run on real footage; not a sustained benchmark and not a model-quality evaluation"
+  },
+  "environment": {
+    "python": "3.12.13 (main, Jun 11 2026, 04:05:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64"
+  },
+  "scope": "Executed component and short end-to-end evidence. No NVIDIA runtime, no 10K fleet and no model-quality result is claimed by this file."
+}

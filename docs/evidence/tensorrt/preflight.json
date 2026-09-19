@@ -1,0 +1,475 @@
+{
+  "status": "PREFLIGHT_OK",
+  "captured_at": "2026-09-18T12:09:22.001778+00:00",
+  "environment": {
+    "captured_at": "2026-09-18T12:09:16.582749+00:00",
+    "host": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "machine": "AMD64",
+      "python": "3.12.13"
+    },
+    "python": "3.12.13 (main, Jun 11 2026, 04:05:29) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64",
+    "gpu_names": [],
+    "nvidia_smi_query": null,
+    "nvidia_smi": {
+      "present": false,
+      "gpu_detected": false,
+      "reason": "nvidia-smi_not_found",
+      "gpu_names": []
+    },
+    "onnxruntime_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "driver": null,
+    "cuda": null,
+    "tensorrt": "unavailable: ModuleNotFoundError",
+    "torch": "2.14.0+cpu",
+    "onnxruntime": "1.30.0",
+    "torch_cuda_build": null,
+    "torch_cuda_available": false,
+    "capabilities": {
+      "ONNX_CPU": {
+        "available": true,
+        "status": "VERIFIED",
+        "reason": null,
+        "providers": [
+          "AzureExecutionProvider",
+          "CPUExecutionProvider"
+        ]
+      },
+      "ONNX_CUDA": {
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "gpu_not_detected",
+        "provider_state": "UNAVAILABLE",
+        "provider_probe": null,
+        "providers": [
+          "AzureExecutionProvider",
+          "CPUExecutionProvider"
+        ]
+      },
+      "TENSORRT": {
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "tensorrt_module_not_installed",
+        "provider_state": "UNAVAILABLE",
+        "provider_probe": null,
+        "tensorrt_module": false,
+        "tensorrt_execution_provider": false
+      },
+      "DEEPSTREAM": {
+        "available": false,
+        "status": "IMPLEMENTED - NVIDIA RUNTIME NOT VERIFIED",
+        "reason": "deepstream_or_pyds_unavailable",
+        "sdk_root_present": false,
+        "pyds_importable": false
+      },
+      "gpu_metrics_available": false
+    },
+    "git": {
+      "commit": "5f391d25999114c0731b7a86a3837af894129caa",
+      "working_tree": "dirty"
+    }
+  },
+  "tensorrt_path": {
+    "runtime": "TENSORRT",
+    "declared_torch_dtypes": [
+      "BF16",
+      "BOOL",
+      "FLOAT",
+      "HALF",
+      "INT32",
+      "INT64",
+      "INT8",
+      "UINT8"
+    ],
+    "declared_numpy_dtypes": [
+      "BOOL",
+      "FLOAT",
+      "HALF",
+      "INT32",
+      "INT64",
+      "INT8",
+      "UINT8"
+    ],
+    "uses_execute_async_v3": true,
+    "derives_both_dtypes_from_the_engine": true,
+    "has_dynamic_input_profile_path": true,
+    "uses_a_dedicated_cuda_stream": true,
+    "guards_missing_fp16_builder_flag": true,
+    "verifies_precision_against_engine_dtypes": true,
+    "precision_evidence_rules": {
+      "fp16": [
+        "HALF",
+        "BF16"
+      ],
+      "fp32": [
+        "FLOAT"
+      ]
+    },
+    "precision_rule_behaviour": [
+      {
+        "label": "fp32",
+        "engine_dtypes": [
+          "FLOAT"
+        ],
+        "actual_engine_precision": "FP32",
+        "label_backed": true,
+        "expected": true
+      },
+      {
+        "label": "fp32",
+        "engine_dtypes": [
+          "HALF"
+        ],
+        "actual_engine_precision": "FP16",
+        "label_backed": false,
+        "expected": false
+      },
+      {
+        "label": "fp32",
+        "engine_dtypes": [
+          "FLOAT",
+          "HALF"
+        ],
+        "actual_engine_precision": "MIXED:FLOAT+HALF",
+        "label_backed": false,
+        "expected": false
+      },
+      {
+        "label": "fp16",
+        "engine_dtypes": [
+          "HALF"
+        ],
+        "actual_engine_precision": "FP16",
+        "label_backed": true,
+        "expected": true
+      },
+      {
+        "label": "fp16",
+        "engine_dtypes": [
+          "FLOAT"
+        ],
+        "actual_engine_precision": "FP32",
+        "label_backed": false,
+        "expected": false
+      },
+      {
+        "label": "fp16",
+        "engine_dtypes": [
+          "FLOAT",
+          "HALF"
+        ],
+        "actual_engine_precision": "MIXED:FLOAT+HALF",
+        "label_backed": true,
+        "expected": true
+      },
+      {
+        "label": "fp16",
+        "engine_dtypes": [],
+        "actual_engine_precision": "UNKNOWN",
+        "label_backed": false,
+        "expected": false
+      },
+      {
+        "label": "fp16",
+        "engine_dtypes": [
+          "BF16"
+        ],
+        "actual_engine_precision": "MIXED:BF16",
+        "label_backed": true,
+        "expected": true
+      }
+    ],
+    "issues": [],
+    "ok": true,
+    "note": "source inspection plus a stubbed precision-rule check; the dtype mapping, the execution path and every measured number are confirmed only by a run on an NVIDIA GPU"
+  },
+  "onnx_provider_states": {
+    "ONNX_CUDA": {
+      "provider_state": "UNAVAILABLE",
+      "available": false
+    },
+    "TENSORRT": {
+      "provider_state": "UNAVAILABLE",
+      "available": false
+    }
+  },
+  "fp16_builder_flag_available": false,
+  "model": {
+    "path": "var\\model\\hansung-p3.onnx",
+    "bytes": 12245976,
+    "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "opset": [
+      {
+        "domain": "ai.onnx",
+        "version": 17
+      }
+    ],
+    "ir_version": 8,
+    "input_name": "images",
+    "input_shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "output_name": "output0",
+    "output_shape": [
+      1,
+      14,
+      8400
+    ],
+    "declared_names": "{0: 'Hardhat', 1: 'Mask', 2: 'NO-Hardhat', 3: 'NO-Mask', 4: 'NO-Safety Vest', 5: 'Person', 6: 'Safety Cone', 7: 'Safety Vest', 8: 'machinery', 9: 'vehicle'}",
+    "producer": "pytorch 2.14.0",
+    "expected_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "matches_qualified_artifact": true,
+    "qualified_record": {
+      "architecture": "YOLOv8n",
+      "publisher": "Hansung-Cho/yolov8-ppe-detection",
+      "source_index_to_canonical_id": {
+        "5": 0,
+        "0": 1,
+        "2": 2
+      },
+      "canonical_class_map": {
+        "0": "person",
+        "1": "helmet",
+        "2": "no_helmet"
+      },
+      "declared_output_shape": [
+        1,
+        14,
+        8400
+      ]
+    }
+  },
+  "contract": {
+    "profile": "hansung_ppe_yolov8n_10",
+    "source_index_to_canonical": {
+      "0": 1,
+      "2": 2,
+      "5": 0
+    },
+    "source_classes": {
+      "0": "Hardhat",
+      "1": "Mask",
+      "2": "NO-Hardhat",
+      "3": "NO-Mask",
+      "4": "NO-Safety Vest",
+      "5": "Person",
+      "6": "Safety Cone",
+      "7": "Safety Vest",
+      "8": "machinery",
+      "9": "vehicle"
+    },
+    "input_shape": [
+      640,
+      640
+    ],
+    "source_count": 10,
+    "raw_channels": 14,
+    "score_threshold": 0.35,
+    "nms_iou": 0.5,
+    "canonical_classes": {
+      "0": "person",
+      "1": "helmet",
+      "2": "no_helmet"
+    }
+  },
+  "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba",
+  "samples": {
+    "source": "var/media/ppe-2.mp4",
+    "count": 6,
+    "samples": [
+      {
+        "id": "frame-000",
+        "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-025",
+        "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-050",
+        "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-100",
+        "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-150",
+        "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "id": "frame-200",
+        "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      }
+    ],
+    "note": "each runtime preprocesses these exact inputs with the shared letterbox"
+  },
+  "cpu_reference_decode": [
+    {
+      "sample": "frame-000",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 97.95
+    },
+    {
+      "sample": "frame-025",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 119.0
+    },
+    {
+      "sample": "frame-050",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 119.6
+    },
+    {
+      "sample": "frame-100",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 83.34
+    },
+    {
+      "sample": "frame-150",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 91.04
+    },
+    {
+      "sample": "frame-200",
+      "detections": 4,
+      "classes": [
+        0,
+        1
+      ],
+      "cpu_latency_ms": 106.49
+    }
+  ],
+  "steps": [
+    {
+      "step": "verify_model_identity",
+      "status": "ok",
+      "sha256": "b239aa7e881fc590",
+      "bytes": 12245976,
+      "input": [
+        1,
+        3,
+        640,
+        640
+      ],
+      "output": [
+        1,
+        14,
+        8400
+      ],
+      "opset": [
+        {
+          "domain": "ai.onnx",
+          "version": 17
+        }
+      ]
+    },
+    {
+      "step": "canonical_contract",
+      "status": "ok",
+      "profile": "hansung_ppe_yolov8n_10",
+      "source_count": 10,
+      "raw_channels": 14,
+      "sources": [
+        0,
+        2,
+        5
+      ],
+      "mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+    },
+    {
+      "step": "load_evaluation_samples",
+      "status": "ok",
+      "count": 6,
+      "source": "var/media/ppe-2.mp4"
+    },
+    {
+      "step": "cpu_reference_decode",
+      "status": "ok",
+      "samples": 6,
+      "detections": 24
+    },
+    {
+      "step": "tensorrt_path_static_checks",
+      "status": "ok",
+      "uses_execute_async_v3": true,
+      "derives_both_dtypes_from_the_engine": true,
+      "has_dynamic_input_profile_path": true,
+      "uses_a_dedicated_cuda_stream": true,
+      "guards_missing_fp16_builder_flag": true,
+      "verifies_precision_against_engine_dtypes": true
+    },
+    {
+      "step": "onnx_provider_states",
+      "status": "ok",
+      "ONNX_CUDA": {
+        "provider_state": "UNAVAILABLE",
+        "available": false
+      },
+      "TENSORRT": {
+        "provider_state": "UNAVAILABLE",
+        "available": false
+      }
+    }
+  ],
+  "scope": "validates model identity, canonical contract, sample extraction, the shared decoder on CPU and the static TensorRT path checks. It does NOT verify TensorRT execution; a real run still requires an NVIDIA GPU.",
+  "next_step": "python -m scripts.verify_tensorrt_gpu --onnx ... --samples-dir ... --out docs/evidence/tensorrt on an NVIDIA host"
+}

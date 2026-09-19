@@ -1,0 +1,19 @@
+# Opt-in local RTSP development environment.
+#
+#   docker compose -f infrastructure/compose.rtsp.yaml up -d mediamtx
+#   .venv/bin/python -m scripts.publish_rtsp --video var/media/ppe-2.mp4 --url rtsp://localhost:8554/live
+#
+# Then point a device video source at rtsp://localhost:8554/live and set
+# VISIONOPS_VIDEO_BACKEND=opencv (default) or gstreamer.
+#
+# NOT RUNTIME VERIFIED: the image tag below was not pulled in the development
+# environment, and no RTSP session was established there. See docs/LOCAL_RTSP.md.
+name: visionops-rtsp
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:1.11.3
+    ports: ['127.0.0.1:8554:8554', '127.0.0.1:9997:9997']
+    environment:
+      MTX_RTSPTRANSPORTS: tcp
+      MTX_LOGLEVEL: info
+    restart: unless-stopped

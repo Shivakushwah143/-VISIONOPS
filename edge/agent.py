@@ -1,9 +1,11 @@
 """Outbound agent with durable identity/outbox, signed staging and local rollback."""
-import argparse,base64,hashlib,json,os,random,sys,tarfile,time,uuid,subprocess,platform
+import argparse,base64,hashlib,json,os,random,sys,tarfile,time,uuid,subprocess
 from pathlib import Path
 from datetime import datetime,timezone,timedelta
 import httpx,psutil
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+from shared import hardware_profiles
+from .hardware_telemetry import HardwareTelemetry
 from .state import State
 from .watchdog import Watchdog
 
@@ -15,6 +17,8 @@ class Agent:
         self.root=Path(root);self.root.mkdir(parents=True,exist_ok=True,mode=0o700);os.chmod(self.root,0o700);self.state=State(self.root/'state.sqlite');self.url=url.rstrip('/');self.trust=Path(trust);self.mode=mode
         if not (url.startswith('https://') or url.startswith('http://localhost:') or url.startswith('http://127.0.0.1:') or os.environ.get('ALLOW_PRIVATE_HTTP')=='1'):raise ValueError('HTTPS required')
         self.client=httpx.Client(base_url=self.url+'/api/v1',timeout=15);self.boot=str(uuid.uuid4());self.sequence=0;self.worker=None;self.etag=None;self.error=None;self.phase='idle';self.metrics=[];self.last_window=utc();self.last_tick=time.monotonic();self.previous_frames={};self.previous_input_frames={};self.watchdog=Watchdog(self.state);self.worker_started_at=0;self.recovery_until=None;self.supervisor_disabled=self.state.get('supervisor_disabled',False)
+        # Capability-based compatibility: no single hardcoded architecture/profile.
+        self.environment=hardware_profiles.detect_local_environment();self.telemetry=HardwareTelemetry();self.last_compatibility=None
         identity=self.state.get('identity')
         if identity:self.client.headers['Authorization']='Bearer '+identity['device_credential']
         # An interrupted activation never commits the candidate on restart.
@@ -48,7 +52,8 @@ class Agent:
     def prepare(self,desired):
         signed=self.get('/releases/'+desired['release_id']+'/manifest');manifest=signed['manifest']
         if sha(manifest)!=desired['manifest_sha256'] or manifest['evidence_mode']!=self.mode:raise ValueError('manifest_scope')
-        if manifest['hardware_profile']!='cpu_onnx_x86_64' or platform.machine() not in ('x86_64','AMD64'):raise ValueError('incompatible_hardware_profile')
+        verdict=hardware_profiles.evaluate(manifest['hardware_profile'],self.environment);self.last_compatibility=verdict
+        if not verdict['compatible']:raise ValueError('incompatible_hardware_profile:'+','.join(verdict['reasons']))
         kid=signed['key_id']
         if not kid.replace('-','').replace('_','').isalnum():raise ValueError('key_id')
         Ed25519PublicKey.from_public_bytes(base64.b64decode((self.trust/(kid+'.pub')).read_text())).verify(base64.b64decode(signed['signature']),canonical(manifest))
@@ -68,7 +73,11 @@ class Agent:
         if not(dest/'worker.py').is_file():raise ValueError('missing_worker')
         if not(dest/'warmup.jpg').is_file():raise ValueError('missing_signed_warmup')
         (slot/'config.json').write_bytes(canonical(config['settings']));(slot/'manifest.json').write_bytes(canonical(manifest))
-        return {**desired,'slot':str(slot.resolve()),'model_sha256':manifest['model_sha256'],'application_version':json.loads((dest/'version.json').read_text())['application_version'],'model_version':manifest['model_artifact_id'],'artifact_version':manifest['runtime_artifact_id']}
+        return {**desired,'slot':str(slot.resolve()),'model_sha256':manifest['model_sha256'],'hardware_profile':manifest['hardware_profile'],'class_mapping_version':manifest.get('class_mapping_version'),'environment':self.environment,'application_version':json.loads((dest/'version.json').read_text())['application_version'],'model_version':manifest['model_artifact_id'],'artifact_version':manifest['runtime_artifact_id']}
+    def capability_report(self,actual):
+        """Inventory fields the control plane needs, nested in the free-form capability map."""
+        environment=self.environment
+        return {'mode':self.mode,'agent_version':'0.1.0','architecture':environment['architecture'],'machine':environment['machine'],'os':environment['os'],'runtime':environment['runtime'],'runtime_version':environment.get('runtime_version'),'simulated_hardware':environment['simulated_hardware'],'runtime_capabilities':environment['capabilities'],'declared_versions':environment['declared_versions'],'measured_versions':environment['measured_versions'],'jetpack_version':environment.get('jetpack_version'),'cuda_version':environment.get('cuda_version'),'tensorrt_version':environment.get('tensorrt_version'),'compatibility':self.last_compatibility,'video_backend':os.environ.get('VISIONOPS_VIDEO_BACKEND','opencv'),'application_version':actual.get('application_version') if actual else None,'model_version':actual.get('model_version') if actual else None,'artifact_version':actual.get('artifact_version') if actual else None}
     def start_worker(self,actual):
         self.worker_started_at=time.time()
         if self.mode=='simulated':return
@@ -157,12 +166,14 @@ class Agent:
             status_path=self.root/'worker-status.json'
             if status_path.exists():
                 status=json.loads(status_path.read_text());cameras=status.get('cameras',[])
+                # Real host readings; GPU stays `None` unless a provider truly exists.
+                hardware=self.telemetry.heartbeat_values()
                 for camera in cameras[:4]:
-                    count=camera.get('inference_frames',0);previous=self.previous_frames.get(camera.get('camera_id'),0);new_count=max(0,count-previous);samples=camera.get('latency_ms',[])[-min(1024,new_count):] if new_count else [];duration=max((stamp-self.last_window).total_seconds(),.001)
-                    metric.append({'metric_summary_id':str(uuid.uuid4()),'camera_id':camera.get('camera_id'),'release_id':actual['release_id'],'window_start':self.last_window.isoformat(),'window_end':stamp.isoformat(),'sample_count':len(samples),'values':{'inference_latency_ms':samples,'inference_fps':new_count/duration,'input_fps':max(0,camera.get('input_frames',0)-self.previous_input_frames.get(camera.get('camera_id'),0))/duration,'queue_depth':camera.get('queue_depth',0),'input_frames_total':camera.get('input_frames',0),'inference_frames_total':count,'outbox_depth':self.state.depth(),'dropped_frames':camera.get('dropped_frames',0),'reconnect_count':camera.get('reconnect_count',0),'cpu_percent':psutil.cpu_percent(),'rss_bytes':psutil.Process().memory_info().rss,'gpu_utilization_ratio':None}})
+                    count=camera.get('inference_frames',0);previous=self.previous_frames.get(camera.get('camera_id'),0);new_count=max(0,count-previous);samples=camera.get('inference_latency_ms',camera.get('latency_ms',[]))[-min(1024,new_count):] if new_count else [];duration=max((stamp-self.last_window).total_seconds(),.001)
+                    metric.append({'metric_summary_id':str(uuid.uuid4()),'camera_id':camera.get('camera_id'),'release_id':actual['release_id'],'window_start':self.last_window.isoformat(),'window_end':stamp.isoformat(),'sample_count':len(samples),'values':{'inference_latency_ms':samples,'inference_fps':new_count/duration,'input_fps':max(0,camera.get('input_frames',0)-self.previous_input_frames.get(camera.get('camera_id'),0))/duration,'processed_fps':camera.get('processed_fps'),'queue_depth':camera.get('queue_depth',0),'input_frames_total':camera.get('input_frames',0),'inference_frames_total':count,'outbox_depth':self.state.depth(),'dropped_frames':camera.get('dropped_frames',0),'reconnect_count':camera.get('reconnect_count',0),'rtsp_connected':camera.get('rtsp_connected'),'stream_age_seconds':camera.get('stream_age_seconds'),'decode_fps':camera.get('decode_fps'),'inference_latency_ms_p95':camera.get('inference_latency_ms_p95'),'gpu_metrics_available':hardware['gpu_utilization_ratio'] is not None,**hardware}})
                     self.previous_frames[camera.get('camera_id')]=count;self.previous_input_frames[camera.get('camera_id')]=camera.get('input_frames',0)
         self.last_window=stamp
-        payload={'device_id':identity['device_id'],'boot_id':self.boot,'sequence':self.sequence,'observed_at':stamp.isoformat(),'actual_release_id':actual['release_id'] if actual else None,'actual_config_version_id':actual['config_version_id'] if actual else None,'applied_generation':actual['generation'] if actual else 0,'agent_state':self.phase,'health_status':('unknown' if self.mode=='real' and not metric else 'healthy' if actual and healthy else 'unhealthy' if actual else 'unknown'),'source_states':([{'camera_id':c['camera_id'],'status':c['status'],'last_frame_at':c.get('last_frame_at')} for c in cameras] if self.mode=='real' and actual and 'cameras' in locals() else []),'capabilities':{'mode':self.mode,'agent_version':'0.1.0','application_version':actual.get('application_version') if actual else None,'model_version':actual.get('model_version') if actual else None,'artifact_version':actual.get('artifact_version') if actual else None},'metric_summaries':metric,'rejected_generation':self.state.get('rejected_generation'),'last_error_code':self.error}
+        payload={'device_id':identity['device_id'],'boot_id':self.boot,'sequence':self.sequence,'observed_at':stamp.isoformat(),'actual_release_id':actual['release_id'] if actual else None,'actual_config_version_id':actual['config_version_id'] if actual else None,'applied_generation':actual['generation'] if actual else 0,'agent_state':self.phase,'health_status':('unknown' if self.mode=='real' and not metric else 'healthy' if actual and healthy else 'unhealthy' if actual else 'unknown'),'source_states':([{'camera_id':c['camera_id'],'status':c['status'],'last_frame_at':c.get('last_frame_at')} for c in cameras] if self.mode=='real' and actual and 'cameras' in locals() else []),'capabilities':self.capability_report(actual),'metric_summaries':metric,'rejected_generation':self.state.get('rejected_generation'),'last_error_code':self.error}
         r=self.client.post('/devices/'+identity['device_id']+'/heartbeats',json=payload);r.raise_for_status()
     def deliver(self):
         batch=self.state.batch()

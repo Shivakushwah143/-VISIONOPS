@@ -1,0 +1,56 @@
+# GPU-host requirements for the TensorRT verification path only:
+#
+#   python -m scripts.verify_tensorrt_gpu            # FP32 + true mixed FP16
+#   python -m scripts.convert_fp16_onnx             # FP32 ONNX -> ModelOpt mixed FP16
+#   docs/evidence/tensorrt/colab_gpu_verify.ipynb
+#
+# Install on a temporary NVIDIA GPU host (Colab or Kaggle). Nothing here is needed
+# for the local CPU path, which has its own dependencies in pyproject.toml.
+#
+# Deliberate omissions, each for a reason:
+#
+#   torch        NOT listed. Colab and Kaggle images already ship a CUDA-matched
+#                torch build; reinstalling it is the fastest way to break a session.
+#                The notebook asserts torch.cuda.is_available() instead.
+#   ultralytics  NOT needed for the TensorRT parity path. Parity is decided by the
+#                canonical decoder in shared/model_contract.py applied to the raw
+#                tensor, not by the model's own argmax. It is required only for
+#                --reference pytorch, which needs a checkpoint that is not shipped.
+#   trtexec      NOT installable from pip. The harness drives the TensorRT Python API
+#                (edge/runtimes.py TensorRTRuntime.build_engine / load / infer) and
+#                only shells out to trtexec if the host already has it.
+#
+# Versions are unpinned on purpose: the GPU host decides the CUDA/TensorRT pairing,
+# and the harness records whatever it actually finds in environment.json rather than
+# asserting a pairing it does not control.
+onnx>=1.15
+supervision>=0.20
+opencv-python-headless>=4.8
+numpy>=1.24
+
+# TensorRT Python API and its runtime libraries. If this wheel does not match the
+# image's CUDA, the harness records the exact pip error and the notebook makes one
+# alternate install attempt before stopping (it does not loop).
+#
+# Version matters for precision semantics, not just availability: TensorRT 11 removed
+# BuilderFlag.FP16, so true FP16 requires a strongly-typed graph (see nvidia-modelopt
+# below). scripts/verify_tensorrt_gpu records which regime the host is in as
+# precision_policy.fp16_builder_flag_available and refuses an FP16 label the engine's
+# own tensor dtypes do not back.
+tensorrt>=10.0
+
+# Required for a TRUE FP16 engine on TensorRT 11+.
+#
+# nvidia-modelopt's ONNX AutoCast produces the mixed-precision graph that carries the
+# precision, but it rebuilds the graph and DROPS the Ultralytics metadata - including
+# `names`, which edge.pipeline.Detector rejects as `model_missing_class_metadata`.
+# scripts/convert_fp16_onnx.py restores the metadata, verifies the taxonomy is
+# identical, and writes a conversion record. It is not needed for the FP32 path.
+nvidia-modelopt>=0.46
+
+# Optional: enables the ONNX Runtime CUDA baseline (ONNX_CUDA). Listing
+# CUDAExecutionProvider is NOT treated as proof it works: edge.runtimes.check_provider
+# opens a real session and runs one inference, and only then is the provider reported
+# VERIFIED. A provider that lists but fails to load is recorded as LOAD_FAILED and the
+# harness still uses ONNX CPU as the parity reference.
+# onnxruntime-gpu>=1.17

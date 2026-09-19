@@ -1,0 +1,154 @@
+{
+  "created_at": "2026-09-18T08:18:39.049575+00:00",
+  "git_commit": "5f391d25999114c0731b7a86a3837af894129caa",
+  "working_tree": "dirty",
+  "onnx": {
+    "path": "var/model/hansung-p3.onnx",
+    "bytes": 12245976,
+    "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "archive_path": "model/hansung-p3.onnx"
+  },
+  "contract_record": {
+    "path": "var/model/hansung-p3.json",
+    "sha256": "662f19d5c64c289f49899d9c3eb3d5dc4134429f54ee1b4d3b35c201ce0e3fd1",
+    "archive_path": "model/hansung-p3.json"
+  },
+  "evaluation_samples": {
+    "video": "var/media/ppe-2.mp4",
+    "video_frames_available": 206,
+    "indices": [
+      0,
+      25,
+      50,
+      100,
+      150,
+      200
+    ],
+    "files": [
+      {
+        "archive_path": "samples/frame-0000.jpg",
+        "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "archive_path": "samples/frame-0025.jpg",
+        "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "archive_path": "samples/frame-0050.jpg",
+        "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "archive_path": "samples/frame-0100.jpg",
+        "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "archive_path": "samples/frame-0150.jpg",
+        "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      },
+      {
+        "archive_path": "samples/frame-0200.jpg",
+        "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+        "shape": [
+          720,
+          1280,
+          3
+        ]
+      }
+    ]
+  },
+  "contents": [
+    {
+      "archive_path": "model/hansung-p3.onnx",
+      "bytes": 12245976,
+      "role": "model",
+      "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422"
+    },
+    {
+      "archive_path": "model/hansung-p3.json",
+      "bytes": 2420,
+      "role": "contract_record",
+      "sha256": "662f19d5c64c289f49899d9c3eb3d5dc4134429f54ee1b4d3b35c201ce0e3fd1"
+    },
+    {
+      "archive_path": "samples/frame-0000.jpg",
+      "bytes": 212960,
+      "role": "evaluation_sample",
+      "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965"
+    },
+    {
+      "archive_path": "samples/frame-0025.jpg",
+      "bytes": 204803,
+      "role": "evaluation_sample",
+      "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869"
+    },
+    {
+      "archive_path": "samples/frame-0050.jpg",
+      "bytes": 221338,
+      "role": "evaluation_sample",
+      "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7"
+    },
+    {
+      "archive_path": "samples/frame-0100.jpg",
+      "bytes": 221860,
+      "role": "evaluation_sample",
+      "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56"
+    },
+    {
+      "archive_path": "samples/frame-0150.jpg",
+      "bytes": 225982,
+      "role": "evaluation_sample",
+      "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb"
+    },
+    {
+      "archive_path": "samples/frame-0200.jpg",
+      "bytes": 230534,
+      "role": "evaluation_sample",
+      "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a"
+    }
+  ],
+  "code": {
+    "file_count": 170,
+    "archive_prefix": "code/",
+    "reproducible_from": {
+      "git_commit": "5f391d25999114c0731b7a86a3837af894129caa",
+      "working_tree": "dirty"
+    },
+    "includes_uncommitted_files": true,
+    "verification_entry_point": "code/scripts/verify_tensorrt_gpu.py",
+    "requirements": "code/requirements-gpu.txt",
+    "notebook": "code/docs/evidence/tensorrt/colab_gpu_verify.ipynb"
+  },
+  "archive": {
+    "path": "var/bundle/visionops-gpu-bundle.zip",
+    "bytes": 12398905,
+    "sha256": "fdf216f817d2310e1fc84c39d56839ab76571ef14d5b5f5e3e9dd4b7fbbe4221",
+    "file_count": 178
+  },
+  "purpose": "inputs for docs/evidence/tensorrt/colab_gpu_verify.ipynb; it contains no results, no engine file and no metric",
+  "note": "the archive is written under gitignored var/ so 12 MB of model weights are not committed; the public repository supplies code/ via git clone as well; the in-archive copy of this manifest leaves `archive` null because a zip cannot carry its own digest, and the on-disk copy at docs/evidence/tensorrt/bundle-manifest.json records it"
+}

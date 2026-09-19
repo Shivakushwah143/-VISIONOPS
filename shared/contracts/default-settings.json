@@ -15,9 +15,24 @@
   "stale_frame_ms": 500,
   "batch_timeout_ms": 100,
   "rtsp_timeout_seconds": 10,
+  "rtsp_reconnect_initial_seconds": 1,
+  "rtsp_reconnect_max_seconds": 30,
   "rule_min_frames": 5,
   "rule_min_span_seconds": 2,
   "rule_max_gap_seconds": 1,
   "rule_cooldown_seconds": 30,
+  "video_backend": null,
+  "temporal": {
+    "analyzers": ["ppe_sustained"],
+    "zones": [],
+    "zone_min_presence_frames": 5,
+    "zone_max_gap_seconds": 2,
+    "zone_cooldown_seconds": 60,
+    "loitering_min_dwell_seconds": 10,
+    "person_down_min_seconds": 6,
+    "person_down_window_seconds": 6,
+    "person_down_min_samples": 5,
+    "person_down_max_displacement_ratio": 0.25
+  },
   "cameras": []
 }

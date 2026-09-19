@@ -1,0 +1,126 @@
+{
+  "precision": "fp32",
+  "reference_runtime": "ONNX_CPU",
+  "engine": {
+    "runtime": "TENSORRT",
+    "precision": "fp32",
+    "model_path": "/content/visionops_gpu/model/hansung-p3.onnx",
+    "input_shape": [
+      640,
+      640
+    ],
+    "contract_profile": "hansung_ppe_yolov8n_10",
+    "expected_output_channels": 14,
+    "engine": "/tmp/visionops-engines-5bmvfu0m/visionops-fp32.engine",
+    "engine_bytes": 80982948,
+    "engine_sha256": "7ca68400f45e3898eec321dcf5a6e4508937ece14b7df14fadec422812967315",
+    "onnx_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+    "workspace_bytes": 1073741824,
+    "engine_io": {
+      "inputs": [
+        {
+          "name": "images",
+          "dtype": "DataType.FLOAT",
+          "shape": [
+            1,
+            3,
+            640,
+            640
+          ],
+          "torch_dtype": "torch.float32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output0",
+          "dtype": "DataType.FLOAT",
+          "shape": [
+            1,
+            14,
+            8400
+          ],
+          "torch_dtype": "torch.float32"
+        }
+      ]
+    },
+    "gpu": "Tesla T4",
+    "tensorrt_version": "11.3.0.99",
+    "dynamic_input": false,
+    "fast_fp16": null,
+    "device_memory_bytes": null,
+    "build_seconds": 54.06
+  },
+  "threshold": 0.35,
+  "samples": [
+    {
+      "sample": "frame-0000.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    },
+    {
+      "sample": "frame-0025.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    },
+    {
+      "sample": "frame-0050.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    },
+    {
+      "sample": "frame-0100.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    },
+    {
+      "sample": "frame-0150.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    },
+    {
+      "sample": "frame-0200.jpg",
+      "reference_detections": 4,
+      "candidate_detections": 4,
+      "matched": 4,
+      "missing": 0,
+      "extra": 0,
+      "min_iou": 1.0,
+      "max_confidence_delta": 0.0
+    }
+  ],
+  "reference_detections": 24,
+  "matched": 24,
+  "missing": 0,
+  "min_iou": 1.0,
+  "mean_iou": 1.0,
+  "max_confidence_delta": 0.0,
+  "max_box_delta_pixels": "1e-04",
+  "class_agreement": "24/24",
+  "criterion": "all detections matched within the same class at IoU>=0.5 and |confidence delta|<=0.05",
+  "passed": true
+}

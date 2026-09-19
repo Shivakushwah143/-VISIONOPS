@@ -3,7 +3,9 @@ import math
 from prometheus_client.core import GaugeMetricFamily
 from sqlalchemy import select
 from .db import Session,Device,Heartbeat,Metric,Campaign,now
-FIELDS={'input_fps':'Input frames per second','inference_fps':'Inference frames per second','queue_depth':'Decoder queue depth','outbox_depth':'Durable upload queue depth','dropped_frames':'Reported cumulative dropped frames','reconnect_count':'Reported cumulative reconnects','rss_bytes':'Reported resident memory bytes','cpu_percent':'Reported CPU percentage'}
+# Stream health and rollout inputs are exported when reported. A field the device did
+# not report is omitted, never written as zero; GPU values appear only when measured.
+FIELDS={'input_fps':'Input frames per second','inference_fps':'Inference frames per second','processed_fps':'Inference frames per second actually processed','decode_fps':'Decoded frames per second','queue_depth':'Decoder queue depth','outbox_depth':'Durable upload queue depth','dropped_frames':'Reported cumulative dropped frames','reconnect_count':'Reported cumulative reconnects','rtsp_connected':'Whether the source is connected and fresh','stream_age_seconds':'Age of the last decoded frame','inference_latency_ms_p95':'Window p95 inference latency','rss_bytes':'Reported resident memory bytes','cpu_percent':'Reported CPU percentage','gpu_utilization_ratio':'GPU utilization ratio, only when a provider measured it'}
 class PipelineMetrics:
     def collect(self):
         available=GaugeMetricFamily('visionops_database_observations_available','Whether the persisted observation query completed')

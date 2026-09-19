@@ -1,5 +1,27 @@
 # Verification report
 
+> **Continuation 2 (current):** see [CURRENT_VERIFIED_STATE.md](CURRENT_VERIFIED_STATE.md) for the reconciled status, including the repository-truth findings and the new evidence files. Table rows below are the earlier baseline unless noted.
+
+## Continuation 2 results (executed on this host)
+
+| Exercise | Status | Evidence |
+| --- | --- | --- |
+| Canonical contract shared by CPU + NVIDIA paths; generated parser header and `nvinfer.txt` consistent; independent numpy decoder agrees with the canonical decoder | VERIFIED | `docs/evidence/model-contract-runtime.json` (3 frames, 12 boxes, delta 0.0) |
+| Inference runtimes with fail-closed capability detection | VERIFIED | `docs/evidence/edge-platform-runtime.json` (CPU available; CUDA/TensorRT unavailable with reasons and they refuse to load) |
+| Hardware telemetry: real CPU/RSS, GPU absent and explicitly unknown | VERIFIED | same file (`gpu: null`, `gpu_metrics_available: false`) |
+| Hardware-profile matrix and simulated-target labelling | VERIFIED | same file (arm64/Jetson rejected with reason codes; declared target marked `simulated_hardware`) |
+| OpenCV video source metrics (fps, queue, drops, stream age) | VERIFIED | same file (60/60 frames, queue 2, 58 intended throttle drops) |
+| RTSP disconnect/reconnect with bounded backoff and clean shutdown | VERIFIED (contract only, no server present) | same file |
+| Deterministic temporal analyzers (PPE sustained, zone dwell, loitering, low-motion) | VERIFIED | same file |
+| Real artifact end-to-end: `Detector → ByteTrack → zone dwell → SQLite outbox` | VERIFIED (short functional run) | same file (39 inference frames, p50 96.8 ms / p95 194.6 ms, 4 durable events) |
+| PyTorch → ONNX export with two-threshold graph parity | VERIFIED | `docs/evidence/onnx-export-parity.json` (24/24 at 0.35, 159/159 at 0.001, min IoU 1.0) |
+| TensorRT FP32 on a real NVIDIA GPU (Tesla T4, TensorRT 11.3.0.99) | VERIFIED | `docs/evidence/tensorrt/final/fp32/` — 24/24 parity at IoU 1.0, p50 4.658 ms / mean 4.834 ms, 206.87 model-only FPS |
+| True mixed-FP16 TensorRT (ModelOpt graph, engine declares `HALF`) | VERIFIED | `docs/evidence/tensorrt/final/true_fp16/` — 24/24, min IoU 0.9922; FP32-vs-FP16 ONNX parity min IoU 0.9955 |
+| Canonical contract on GPU: a discarded source class cannot steal the decision | VERIFIED | `docs/evidence/tensorrt/final/fp32/contract-semantics.json` — 908 of 1827 boxes would be re-interpreted by a global argmax |
+| Precision claims must be backed by the engine's own tensor dtypes | VERIFIED | `scripts/verify_tensorrt_gpu` records `NOT VERIFIED - LABEL_NOT_BACKED_BY_ENGINE_DTYPES` and excludes it from the table; superseded run kept in `docs/evidence/tensorrt/final/superseded/` |
+| ONNX Runtime CUDA baseline | NOT VERIFIED | provider listed but not operational; probed as `LOAD_FAILED`/`AVAILABLE - NOT QUALIFIED`, never assumed |
+| GStreamer backend, MediaMTX environment, WebSocket delivery, 10K fleet numbers, ARM64 build, DeepStream runtime | IMPLEMENTED — NOT VERIFIED / NOT PRODUCED | see CURRENT_VERIFIED_STATE.md |
+
 **Overall end-to-end status: BLOCKED. Complete P0 software status: NOT IMPLEMENTED.** Successful component checks below are not a full release approval.
 
 | Exercise | Status | Evidence / result |

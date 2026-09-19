@@ -1,5 +1,83 @@
+# DVC pipeline definition. IMPLEMENTED - NOT RUNTIME VERIFIED: no dataset is
+# downloaded and no stage was executed in the development environment, so no
+# lineage hash in this repository was produced by DVC.
+#
+# Sample data, not full datasets, is what belongs in version control here. Large
+# raw data stays in the configured remote; `training/data/manifest.json` carries
+# the provenance, license and recording-group/recording-disjoint split hashes that
+# `DatasetVersion.dvc_hash` is expected to reference.
+vars:
+  - base_weights: var/model/yolo11n.pt   # locally verified YOLO11n weights, not downloaded here
+  - epochs: 30
+  - tracking_uri: http://localhost:5000
+  - dataset_version: unversioned-local-dataset
+  - evidence: var/evidence/raw-evaluation.json
+
 stages:
   validate:
-    cmd: python -m training.validate_dataset --manifest training/data/manifest.json --root training/data --output training/data/validation.json
-    deps: [training/data/manifest.json, training/validate_dataset.py]
-    outs: [training/data/validation.json]
+    desc: Provenance, license, taxonomy, geometry and group-disjoint split checks
+    cmd: >-
+      python -m training.validate_dataset
+      --manifest training/data/manifest.json
+      --root training/data
+      --output training/data/validation.json
+    deps:
+      - training/data/manifest.json
+      - training/validate_dataset.py
+    outs:
+      - training/data/validation.json
+
+  train:
+    desc: YOLO11n training with MLflow lineage (base weights supplied, never a COCO substitute)
+    cmd: >-
+      python -m training.train
+      --data training/data/data.yaml
+      --dataset-manifest training/data/manifest.json
+      --base-weights ${base_weights}
+      --epochs ${epochs}
+      --tracking-uri ${tracking_uri}
+      --output var/training
+    deps:
+      - training/data/data.yaml
+      - training/data/validation.json
+      - training/train.py
+    params:
+      - training/params.yaml:
+          - epochs
+          - image_size
+          - architecture
+    outs:
+      - var/training
+
+  export:
+    desc: PyTorch -> ONNX export plus mandatory graph-parity qualification
+    cmd: >-
+      python -m scripts.export_onnx
+      --checkpoint var/training/${architecture}/weights/best.pt
+      --output var/model/exported.onnx
+      --report docs/evidence/onnx-export-parity.json
+      --dataset-version ${dataset_version}
+      --mlflow-tracking-uri ${tracking_uri}
+    deps:
+      - var/training
+      - scripts/export_onnx.py
+      - shared/model_contract.py
+    outs:
+      - var/model/exported.onnx
+    metrics:
+      - docs/evidence/onnx-export-parity.json:
+          cache: false
+
+  qualify:
+    desc: Recompute detector/temporal metrics from raw evidence (never from summary claims)
+    cmd: >-
+      python -m training.recompute_evidence
+      --evidence ${evidence}
+      --output var/training/qualification.json
+      --tracking-uri ${tracking_uri}
+    deps:
+      - training/quality.py
+      - training/recompute_evidence.py
+      - var/model/exported.onnx
+    metrics:
+      - var/training/qualification.json

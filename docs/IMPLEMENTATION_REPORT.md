@@ -1,5 +1,16 @@
 # Implementation report
 
+> **Continuation 2 update.** `shared/model_contract.py` is no longer an unused module:
+> `Detector` decodes exclusively through it (letterbox, taxonomy validation, subset
+> scoring, letterbox inverse, class-aware NMS), and the NVIDIA parser, `nvinfer.txt` and
+> the metadata bridge are generated from the same contract. The agent's single hardcoded
+> hardware literal became a profile matrix; the release manifest gained architecture,
+> runtime, runtime version, model format, input shape, mapping version, dataset identity
+> and source MLflow run; the worker asserts the released mapping version before loading a
+> candidate. New modules: `edge/video.py`, `edge/temporal.py`, `edge/runtimes.py`,
+> `edge/hardware_telemetry.py`, `shared/hardware_profiles.py`, `backend/app/events.py`,
+> `simulation/fleet_scale.py`. Status detail: [CURRENT_VERIFIED_STATE.md](CURRENT_VERIFIED_STATE.md).
+
 Overall status: **NOT IMPLEMENTED** for the complete requested platform. This archive contains substantive application source and verified components, with unfinished P0 behavior and environmental blockers disclosed in `KNOWN_LIMITATIONS.md`.
 
 The central backend uses FastAPI, SQLAlchemy 2 and psycopg 3, with 30 PostgreSQL tables, an Alembic initial migration, database foreign keys and immutable assignment history. It implements session authentication, role checks, enrollment tokens, scoped heartbeats/events, source versions, artifact storage/signatures, lineage records and campaign commands. A separate controller uses PostgreSQL advisory/row locks for persisted ring and rollback state. Runtime correctness is not established without PostgreSQL.
@@ -12,7 +23,7 @@ The edge agent has enrollment, signature/hash checks, safe tar validation, disti
 
 Simulation tools create deterministic inventory records via authenticated APIs and run 10–50 persistent agent identities in threads. Campaign code implements cumulative 10/25/100% rings, baseline checks, manual advancement, unknown/failure gates and newer-generation rollback. These workflows were not executed against a database, and the rollback-permit allocator was corrected and component-verified; pagination and database runtime qualification remain.
 
-Training code includes dataset validation, YOLO11n/MLflow training, detector evaluation, JS divergence and simulation-only release tooling. The continuation adds raw MLflow evidence import, metric/policy recomputation and a standalone NVIDIA launcher. Real-data evaluation/promotion, full parity qualification and NVIDIA execution remain unverified.
+Training code includes dataset validation, YOLO11n/MLflow training, detector evaluation, JS divergence and simulation-only release tooling. The continuation adds raw MLflow evidence import, metric/policy recomputation and a standalone NVIDIA launcher. Real-data evaluation/promotion and full parity qualification remain unverified because no labeled PPE dataset exists. NVIDIA execution is no longer unverified: the TensorRT runtime was qualified on a real Tesla T4 — FP32 and a true ModelOpt mixed-FP16 engine, both parity-checked through the canonical decoder (`docs/evidence/tensorrt/final/`). The DeepStream runtime itself, physical Jetson, JetPack and ARM64 execution remain unverified, and `gpu_memory` was `NOT MEASURED`, so no VRAM or utilization figure is claimed.
 
 Exact resolved Python dependencies are in `uv.lock` and `requirements.lock`; frontend dependencies are in `package-lock.json`. Docker image tags are explicit versions but not digest-qualified.
 

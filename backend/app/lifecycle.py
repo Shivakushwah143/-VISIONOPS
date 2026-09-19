@@ -1,11 +1,20 @@
 """Artifact bytes, immutable manifests and server-owned promotion policy."""
 from .main import *
+from shared import hardware_profiles, model_contract
 FIELDS={
 'models':(Model,CV,['name','task','class_map']),
 'dataset-versions':(Dataset,CV,['name','git_commit','dvc_hash','dvc_remote_ref','taxonomy','split_manifest_hash','license_ref','validation_evidence_ref','status']),
 'model-versions':(Version,CV,['model_id','training_run_id','mlflow_model_name','mlflow_model_version','version_label']),
 'config-versions':(Config,CV,['hardware_profile','schema_version','settings'])}
-DEFAULTS={'class_map':{'0':'person','1':'helmet','2':'no_helmet'},'input_width':640,'input_height':640,'color_order':'rgb','letterbox':True,'score_threshold':.35,'nms_iou':.5,'inference_fps':5,'queue_capacity':2,'stale_frame_ms':500,'batch_timeout_ms':100,'rtsp_timeout_seconds':10,'rule_min_frames':5,'rule_min_span_seconds':2,'rule_max_gap_seconds':1,'rule_cooldown_seconds':30,'cameras':[]}
+# Must stay byte-identical to shared/contracts/default-settings.json; the API
+# rejects a Config whose settings differ from these signed defaults. Temporal
+# analyzers are configured here so behaviour is versioned with the release, not
+# hardcoded in the worker.
+def _defaults():
+    from pathlib import Path
+    import json
+    return json.loads((Path(__file__).resolve().parents[2]/'shared/contracts/default-settings.json').read_text())
+DEFAULTS=_defaults()
 def register(path,cls,roles,fields):
     def endpoint(body:dict,req:Request):
         body_exact(body,fields,fields)
@@ -58,10 +67,12 @@ async def upload_artifact(artifact_kind:str,req:Request):
                     digestor.update(chunk);f.write(chunk)
             digest_value=digestor.hexdigest(); idem={**metadata,'sha256':digest_value};old=replay(db,req,u,idem)
             if old:return old
-            allowed=['model_version_id','format','precision','hardware_profile','input_shape','class_map','compatibility'] if cls is ModelArtifact else ['version_label','hardware_profile','entrypoint','compatibility']
+            allowed=['model_version_id','format','precision','hardware_profile','input_shape','class_map','compatibility','model_contract_profile'] if cls is ModelArtifact else ['version_label','hardware_profile','entrypoint','compatibility']
             body_exact(metadata,allowed,allowed)
             if cls is ModelArtifact:
                 if metadata['format'] not in ('onnx','tensorrt','pytorch') or metadata['class_map']!=DEFAULTS['class_map']:fail('invalid_model_artifact',422)
+                # Optional: pins the source->canonical interpretation in the release manifest.
+                if metadata.get('model_contract_profile') and not model_contract.known(metadata['model_contract_profile']):fail('unknown_model_contract_profile',422)
                 if metadata['format']=='onnx':
                     import onnxruntime as ort
                     try:ort.InferenceSession(str(temporary),providers=['CPUExecutionProvider'])
@@ -113,6 +124,18 @@ def evaluation(body:dict,req:Request):
             vals['result']='passed' if passed else 'blocked';vals['gate_policy']={'policy_id':'simulation-only'}
         else:fail('invalid_evidence_mode',422)
         row=Evaluation(**vals);db.add(row);db.flush();audit(db,u,'evaluate',row,req);return save_response(db,req,u,body,out(row))
+def release_identity(db,a,r,c,e):
+    """Bundle identity recorded in every signed release manifest.
+
+    Anything that changes model, runtime, mapping or lineage changes the manifest
+    hash and therefore invalidates the signature.
+    """
+    version=get(db,Version,a.model_version_id);model=get(db,Model,version.model_id);run=get(db,Training,version.training_run_id);dataset=get(db,Dataset,run.dataset_version_id)
+    contract=model_contract.profile(a.model_contract_profile) if a.model_contract_profile else None
+    profile=hardware_profiles.resolve(a.hardware_profile)
+    runtime_name=profile['runtimes'][0]
+    identity={'application_version':r.version_label,'model_name':model.name,'model_version':version.version_label,'model_format':a.format,'model_precision':a.precision,'artifact_sha256':a.sha256,'runtime':runtime_name,'runtime_version':r.version_label,'architecture':hardware_profiles.resolve(a.hardware_profile)['architectures'][0],'input_shape':a.input_shape,'class_mapping_version':model_contract.mapping_version(contract) if contract else None,'model_contract_profile':contract.profile if contract else None,'class_mapping':{str(k):v for k,v in sorted(contract.mapping.items())} if contract else None,'model_head_channels':contract.channels if contract else None,'dataset_version':dataset.dvc_hash or dataset.name,'source_mlflow_run':run.mlflow_run_id,'evidence_ref':e.evidence_ref}
+    return identity
 @app.post('/api/v1/releases')
 def create_release(body:dict,req:Request):
     fields=['model_artifact_id','runtime_artifact_id','config_version_id','evaluation_report_id'];body_exact(body,fields,fields)
@@ -121,7 +144,7 @@ def create_release(body:dict,req:Request):
         if old:return old
         a=get(db,ModelArtifact,body['model_artifact_id']);r=get(db,RuntimeArtifact,body['runtime_artifact_id']);c=get(db,Config,body['config_version_id']);e=get(db,Evaluation,body['evaluation_report_id'])
         if len({a.hardware_profile,r.hardware_profile,c.hardware_profile,e.hardware_profile})!=1 or e.model_artifact_id!=a.model_artifact_id:fail('artifact_mismatch',422)
-        rid=uid();manifest=dict(schema_version=1,release_id=rid,hardware_profile=a.hardware_profile,evidence_mode=e.evidence_mode,model_artifact_id=a.model_artifact_id,model_sha256=a.sha256,model_size_bytes=a.size_bytes,runtime_artifact_id=r.runtime_artifact_id,runtime_sha256=r.sha256,runtime_size_bytes=r.size_bytes,config_version_id=c.config_version_id,config_sha256=c.sha256,evaluation_report_id=e.evaluation_report_id,compatibility=r.compatibility,entrypoint='worker')
+        rid=uid();manifest=dict(schema_version=1,release_id=rid,hardware_profile=a.hardware_profile,evidence_mode=e.evidence_mode,model_artifact_id=a.model_artifact_id,model_sha256=a.sha256,model_size_bytes=a.size_bytes,runtime_artifact_id=r.runtime_artifact_id,runtime_sha256=r.sha256,runtime_size_bytes=r.size_bytes,config_version_id=c.config_version_id,config_sha256=c.sha256,evaluation_report_id=e.evaluation_report_id,compatibility=r.compatibility,entrypoint='worker',**release_identity(db,a,r,c,e))
         row=Release(**body,release_id=rid,hardware_profile=a.hardware_profile,evidence_mode=e.evidence_mode,manifest=manifest,manifest_sha256=sha(manifest));db.add(row);db.flush();audit(db,u,'draft',row,req);return save_response(db,req,u,body,out(row))
 @app.post('/api/v1/releases/{release_id}/approve')
 def approve(release_id:str,body:dict,req:Request):

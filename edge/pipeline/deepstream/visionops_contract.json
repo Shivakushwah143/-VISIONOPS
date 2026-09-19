@@ -1,0 +1,28 @@
+{
+  "canonical_class_count": 3,
+  "input_shape": [
+    640,
+    640
+  ],
+  "mapped_canonical_id": [
+    1,
+    2,
+    0
+  ],
+  "mapped_source_index": [
+    0,
+    2,
+    5
+  ],
+  "mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba",
+  "nms_iou": 0.5,
+  "profile": "hansung_ppe_yolov8n_10",
+  "raw_channels": 14,
+  "score_threshold": 0.35,
+  "source_count": 10,
+  "source_index_to_canonical": {
+    "0": 1,
+    "2": 2,
+    "5": 0
+  }
+}

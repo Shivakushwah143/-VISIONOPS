@@ -1,0 +1,226 @@
+{
+  "bundle_version": "1.0.0",
+  "created_at": "2026-09-18T12:07:24.298899+00:00",
+  "git_commit": "5f391d25999114c0731b7a86a3837af894129caa",
+  "working_tree": "dirty",
+  "uncommitted_file_count": 79,
+  "target": {
+    "expected_architecture": "aarch64",
+    "physical_hardware_required": true,
+    "reason": "a TensorRT engine is specific to the GPU, TensorRT version and driver that built it; qualification is only meaningful on the device itself"
+  },
+  "entrypoint": {
+    "script": "run_jetson_validation.sh",
+    "documentation": "RUN_ON_JETSON.md",
+    "module": "code/scripts/verify_physical_jetson.py"
+  },
+  "model": {
+    "fp32_onnx": {
+      "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+      "bytes": 12245976,
+      "expected_qualified_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+      "matches_qualified_lineage": true,
+      "archive_path": "model/hansung-p3.onnx"
+    },
+    "mixed_fp16_onnx": {
+      "sha256": null,
+      "shipped": false,
+      "expected_qualified_sha256": "a74ec6b384c93b2d0bd5d99b3fcc1399712ffee479e9b490c2cda276e1cbea58",
+      "reproduction": "the artifact is not in Git; regenerate it on the device with code/scripts/convert_fp16_onnx.py, which restores the Ultralytics metadata ModelOpt strips and records the new SHA-256 in fp16-generation.json"
+    },
+    "contract_record": {
+      "sha256": "662f19d5c64c289f49899d9c3eb3d5dc4134429f54ee1b4d3b35c201ce0e3fd1",
+      "bytes": 2420,
+      "contract_version": null,
+      "archive_path": "model/hansung-p3.json"
+    }
+  },
+  "canonical_class_mapping": {
+    "contract": "hansung_ppe_yolov8n_10",
+    "source_head": "10 classes, output [1,14,8400]",
+    "canonical": {
+      "0": "Hardhat/helmet",
+      "2": "NO-Hardhat/no_helmet",
+      "5": "Person"
+    },
+    "note": "decoded by shared/model_contract.py; the head argmax is NOT used, because a discarded source class can win it"
+  },
+  "evaluation_samples": {
+    "video": "samples/ppe.mp4",
+    "source": "var/media/ppe-2.mp4",
+    "source_fps": 25.0,
+    "source_frames_available": 206,
+    "frame_indices": [
+      0,
+      25,
+      50,
+      100,
+      150,
+      200
+    ],
+    "files": [
+      {
+        "archive_path": "samples/frame-0000.jpg",
+        "bytes": 212960,
+        "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+        "role": "evaluation_sample"
+      },
+      {
+        "archive_path": "samples/frame-0025.jpg",
+        "bytes": 204803,
+        "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+        "role": "evaluation_sample"
+      },
+      {
+        "archive_path": "samples/frame-0050.jpg",
+        "bytes": 221338,
+        "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+        "role": "evaluation_sample"
+      },
+      {
+        "archive_path": "samples/frame-0100.jpg",
+        "bytes": 221860,
+        "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+        "role": "evaluation_sample"
+      },
+      {
+        "archive_path": "samples/frame-0150.jpg",
+        "bytes": 225982,
+        "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+        "role": "evaluation_sample"
+      },
+      {
+        "archive_path": "samples/frame-0200.jpg",
+        "bytes": 230534,
+        "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+        "role": "evaluation_sample"
+      }
+    ]
+  },
+  "contents": [
+    {
+      "archive_path": "requirements/requirements-jetson.txt",
+      "bytes": 2966,
+      "sha256": "6ebed09a55f4474080ff31e354b3968b029c8af2b0bd59716a919695f025b8c0",
+      "role": "requirements"
+    },
+    {
+      "archive_path": "run_jetson_validation.sh",
+      "bytes": 7088,
+      "sha256": "dbb8a67d4313b20fedb80828156804cddf8f7a0380a59b9ab6922cdad3bb7d5a",
+      "role": "entrypoint"
+    },
+    {
+      "archive_path": "RUN_ON_JETSON.md",
+      "bytes": 7836,
+      "sha256": "57827c41ef3a83220c34e3057b8440bf9a0b2f2cae20c995a70cbe2fa4f6c9e0",
+      "role": "documentation"
+    },
+    {
+      "archive_path": "model/hansung-p3.onnx",
+      "bytes": 12245976,
+      "sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
+      "role": "model_fp32"
+    },
+    {
+      "archive_path": "model/hansung-p3.json",
+      "bytes": 2420,
+      "sha256": "662f19d5c64c289f49899d9c3eb3d5dc4134429f54ee1b4d3b35c201ce0e3fd1",
+      "role": "model_contract"
+    },
+    {
+      "archive_path": "samples/ppe.mp4",
+      "bytes": 2651858,
+      "sha256": "a96eaefd61b10812601a17181eeb5fa2ad92ed3dfdfa2f63dd10e6a695148415",
+      "role": "evaluation_video"
+    },
+    {
+      "archive_path": "samples/frame-0000.jpg",
+      "bytes": 212960,
+      "sha256": "c583ed4ef79a015d6e79e5f150c4bd72c2ea967269b90d254a11756bb397e965",
+      "role": "evaluation_sample"
+    },
+    {
+      "archive_path": "samples/frame-0025.jpg",
+      "bytes": 204803,
+      "sha256": "1bfc4301ad274e83d7ea8a87105106255c599f2bbe2c44eb016021bd7e936869",
+      "role": "evaluation_sample"
+    },
+    {
+      "archive_path": "samples/frame-0050.jpg",
+      "bytes": 221338,
+      "sha256": "c8cb1366c8fdc9104b5fa6f5ea057cf73d9816687b8fc2a6fd5ddb55427155c7",
+      "role": "evaluation_sample"
+    },
+    {
+      "archive_path": "samples/frame-0100.jpg",
+      "bytes": 221860,
+      "sha256": "13b63ade627462f0ff345e17428bede6a5ddf14bb778fcb5ffe6fd0da3ed9c56",
+      "role": "evaluation_sample"
+    },
+    {
+      "archive_path": "samples/frame-0150.jpg",
+      "bytes": 225982,
+      "sha256": "30302b6b53a3a40325515540ffb22a3058f1e08d18a0b30a39dd2e0ace0fcfbb",
+      "role": "evaluation_sample"
+    },
+    {
+      "archive_path": "samples/frame-0200.jpg",
+      "bytes": 230534,
+      "sha256": "fe1d8510c6fbad3b713a14a717a3fc6e11e37c6f17737a2d44c5bb91f30b947a",
+      "role": "evaluation_sample"
+    }
+  ],
+  "code": {
+    "file_count": 209,
+    "archive_prefix": "code/",
+    "reproducible_from": {
+      "git_commit": "5f391d25999114c0731b7a86a3837af894129caa",
+      "working_tree": "dirty"
+    },
+    "includes_uncommitted_files": true,
+    "required_files_asserted": [
+      "scripts/verify_physical_jetson.py",
+      "scripts/detect_jetson_environment.py",
+      "scripts/collect_jetson_telemetry.py",
+      "scripts/verify_jetson_tensorrt.py",
+      "scripts/verify_jetson_video_pipeline.py",
+      "scripts/verify_model_contract.py",
+      "scripts/verify_edge_platform.py",
+      "scripts/convert_fp16_onnx.py",
+      "shared/model_contract.py",
+      "shared/hardware_profiles.py",
+      "edge/runtimes.py",
+      "edge/pipeline.py",
+      "edge/video.py",
+      "edge/temporal.py",
+      "edge/hardware_telemetry.py",
+      "requirements-jetson.txt"
+    ]
+  },
+  "engines": {
+    "included": false,
+    "why": "a TensorRT plan built on another host is not portable; engines are built here and identified by SHA-256 + size, never shipped"
+  },
+  "archive": {
+    "path": "var/bundle/visionops-jetson-validation.zip",
+    "bytes": 15189660,
+    "sha256": "70b7a18a7a3b33bf54a3d8281ac6953aa8252c2dd6e1f2fd6218eb591a5840da",
+    "payload_file_count": 221,
+    "note": "this digest covers the payload written before MANIFEST.json was appended, so it cannot be recomputed by a reader from inside the archive"
+  },
+  "purpose": "inputs for a physical-Jetson qualification run; contains no result, no engine and no metric from any host",
+  "audit": {
+    "problems": [],
+    "file_count": 222,
+    "declared_verified": 221,
+    "declared_total": 221,
+    "engines_found": [],
+    "secret_findings": [],
+    "env_template": {
+      "present": true,
+      "cleared_by_scan": true,
+      "values_are_placeholders": "replace-with-generated-random-value"
+    }
+  }
+}

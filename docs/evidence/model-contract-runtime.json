@@ -1,0 +1,42 @@
+{
+  "generated_deepstream_contract": {
+    "stale_generated_files": [],
+    "declared_classes": 10,
+    "declared_threshold": 0.35,
+    "raw_channels": 14,
+    "mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba",
+    "header_matches_contract": true,
+    "mapped_indices_in_header": true,
+    "mapped_ids_in_header": true
+  },
+  "parser_static_check": {
+    "hardcoded_shape_patterns": [],
+    "macros_used": 5,
+    "verdict": "parser consumes the generated canonical contract"
+  },
+  "documented_mapping": {
+    "status": "VERIFIED",
+    "source_index_to_canonical": {
+      "5": 0,
+      "0": 1,
+      "2": 2
+    },
+    "channels": 14,
+    "source_classes": 10
+  },
+  "detection_equivalence": {
+    "status": "VERIFIED",
+    "profile": "hansung_ppe_yolov8n_10",
+    "runtime": "ONNX_CPU",
+    "frames_compared": 3,
+    "boxes_compared": 12,
+    "classes_seen": {
+      "1": 6,
+      "0": 6
+    },
+    "max_box_delta_pixels": 0.0,
+    "max_confidence_delta": 0.0,
+    "reference_implementation": "independent numpy decode in scripts/verify_model_contract.py"
+  },
+  "note": "Static + CPU inference equivalence only. No NVIDIA runtime, engine or GPU result is claimed."
+}

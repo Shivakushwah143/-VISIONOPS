@@ -1,0 +1,98 @@
+{
+  "threshold": 0.001,
+  "mapped_source_indices": [
+    0,
+    2,
+    5
+  ],
+  "discarded_source_indices": [
+    1,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9
+  ],
+  "source_count": 10,
+  "canonical_classes": [
+    0,
+    1,
+    2
+  ],
+  "boxes_above_threshold": 1826,
+  "global_argmax_on_discarded_class": 907,
+  "argmax_interpretations_that_would_differ": 907,
+  "samples": [
+    {
+      "sample": "frame-0000.jpg",
+      "boxes_above_threshold": 365,
+      "global_argmax_on_discarded_class": 146,
+      "global_argmax_differs_from_canonical_subset": 146,
+      "canonical_detections_emitted": 33,
+      "canonical_classes": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "sample": "frame-0025.jpg",
+      "boxes_above_threshold": 328,
+      "global_argmax_on_discarded_class": 166,
+      "global_argmax_differs_from_canonical_subset": 166,
+      "canonical_detections_emitted": 26,
+      "canonical_classes": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample": "frame-0050.jpg",
+      "boxes_above_threshold": 375,
+      "global_argmax_on_discarded_class": 173,
+      "global_argmax_differs_from_canonical_subset": 173,
+      "canonical_detections_emitted": 39,
+      "canonical_classes": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "sample": "frame-0100.jpg",
+      "boxes_above_threshold": 335,
+      "global_argmax_on_discarded_class": 217,
+      "global_argmax_differs_from_canonical_subset": 217,
+      "canonical_detections_emitted": 27,
+      "canonical_classes": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "sample": "frame-0150.jpg",
+      "boxes_above_threshold": 233,
+      "global_argmax_on_discarded_class": 113,
+      "global_argmax_differs_from_canonical_subset": 113,
+      "canonical_detections_emitted": 19,
+      "canonical_classes": [
+        0,
+        1
+      ]
+    },
+    {
+      "sample": "frame-0200.jpg",
+      "boxes_above_threshold": 190,
+      "global_argmax_on_discarded_class": 92,
+      "global_argmax_differs_from_canonical_subset": 92,
+      "canonical_detections_emitted": 17,
+      "canonical_classes": [
+        0,
+        1
+      ]
+    }
+  ],
+  "conclusion": "A global argmax would have changed the interpretation of 907 box(es) in this sample set; every runtime therefore uses the canonical subset decode."
+}
