@@ -307,13 +307,21 @@ def active_permits(devices):
     return sum(1 for device in devices if device.has_permit)
 
 
-def build_devices(count, prefix='device-'):
-    return [LogicalDevice(index=index, name='%s%05d' % (prefix, index + 1)) for index in range(count)]
+def build_devices(count, prefix='device-', first_index=0):
+    """Deterministic logical devices: index N is always named ``device-N+1``.
+
+    ``first_index`` only shifts which slice of that one global numbering this
+    process owns, so a large fleet can be split across several driver processes
+    (``--first-index``) without renaming or duplicating a single logical device.
+    The default keeps the original behaviour exactly.
+    """
+    return [LogicalDevice(index=first_index + offset, name='%s%05d' % (prefix, first_index + offset + 1))
+            for offset in range(count)]
 
 
 def run(arguments):
     plane = ControlPlane(arguments.url, arguments.email, arguments.password)
-    devices = build_devices(arguments.devices, arguments.name_prefix)
+    devices = build_devices(arguments.devices, arguments.name_prefix, arguments.first_index)
     random.seed(arguments.seed)
     offline = int(arguments.devices * arguments.offline_ratio)
     for device in random.sample(devices, offline):
@@ -390,7 +398,7 @@ def run(arguments):
 def serve(arguments):
     """Sustained heartbeat service; devices in the hold file stop heartbeating."""
     plane = ControlPlane(arguments.url, arguments.email, arguments.password)
-    devices = build_devices(arguments.devices, arguments.name_prefix)
+    devices = build_devices(arguments.devices, arguments.name_prefix, arguments.first_index)
     provision_started = time.monotonic()
     created = provision(plane, devices, arguments.release_id, arguments.sites, arguments.concurrency)
     enrolled = [d for d in devices if d.enrolled]
@@ -423,6 +431,9 @@ if __name__ == '__main__':
     parser.add_argument('--password', default=None)
     parser.add_argument('--release-id', required=True)
     parser.add_argument('--devices', type=int, default=1000)
+    parser.add_argument('--first-index', type=int, default=0,
+                        help='first logical device index this process owns; lets one fleet '
+                             'be split across several driver processes (device-N+1 naming)')
     parser.add_argument('--sites', type=int, default=1)
     parser.add_argument('--name-prefix', default='device-')
     parser.add_argument('--concurrency', type=int, default=32)

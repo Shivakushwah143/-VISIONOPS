@@ -1,0 +1,240 @@
+{
+  "note": "raw API responses captured live",
+  "stages": {
+    "fleet": {
+      "stage": "fleet",
+      "recorded_at": "2026-09-24T08:15:41.641698+00:00",
+      "fleet_summary": {
+        "total_records": 10000,
+        "real_records": 0,
+        "simulated_records": 10000,
+        "online": 2466,
+        "offline": 7534,
+        "never_seen": 0,
+        "healthy": 2466,
+        "degraded": 0,
+        "desired_actual_mismatch": 0,
+        "generated_at": "2026-09-24T08:15:48.712310+00:00"
+      },
+      "target_matches": [
+        {
+          "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+          "name": "device-07421",
+          "connectivity": "online",
+          "health_status": "healthy",
+          "last_seen_age_seconds": 0.918989
+        }
+      ],
+      "offline_devices_first_page": 200,
+      "target_offline_listed": false,
+      "target": {
+        "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+        "name": "device-07421",
+        "mode": "simulated",
+        "hardware_profile": "cpu_onnx_x86_64",
+        "registration_status": "enrolled",
+        "connectivity": "online",
+        "health_status": "healthy",
+        "agent_state": "healthy",
+        "last_seen": "2026-09-24T08:15:48.267930+00:00",
+        "last_seen_age_seconds": 2.627282,
+        "site_id": "a3ca3946-912c-4a5f-942f-e0e7d98c87a7",
+        "desired_generation": 1,
+        "applied_generation": 1,
+        "desired_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "actual_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_heartbeat_at": "2026-09-24T08:15:48.268001+00:00",
+        "desired_state": {
+          "generation": 1,
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "download_permit": true
+        }
+      },
+      "active_campaigns": [],
+      "release_index": {
+        "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b": {
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "e2cdf7bd-6866-4ac2-a1c6-464c1c7a24cc": {
+          "version_label": "ppe-hansung-v2",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "797c540800d9c8cbb5b837416cd2401f04db2327f93075d1d8fea225ffad2eb5",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        }
+      }
+    },
+    "unreachable": {
+      "stage": "unreachable",
+      "recorded_at": "2026-09-24T08:17:46.639693+00:00",
+      "fleet_summary": {
+        "total_records": 10000,
+        "real_records": 0,
+        "simulated_records": 10000,
+        "online": 2412,
+        "offline": 7588,
+        "never_seen": 0,
+        "healthy": 2412,
+        "degraded": 0,
+        "desired_actual_mismatch": 0,
+        "generated_at": "2026-09-24T08:17:55.004443+00:00"
+      },
+      "target_matches": [
+        {
+          "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+          "name": "device-07421",
+          "connectivity": "offline",
+          "health_status": "healthy",
+          "last_seen_age_seconds": 127.882987
+        }
+      ],
+      "offline_devices_first_page": 200,
+      "target_offline_listed": false,
+      "target": {
+        "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+        "name": "device-07421",
+        "mode": "simulated",
+        "hardware_profile": "cpu_onnx_x86_64",
+        "registration_status": "enrolled",
+        "connectivity": "offline",
+        "health_status": "healthy",
+        "agent_state": "healthy",
+        "last_seen": "2026-09-24T08:15:48.267930+00:00",
+        "last_seen_age_seconds": 132.312632,
+        "site_id": "a3ca3946-912c-4a5f-942f-e0e7d98c87a7",
+        "desired_generation": 1,
+        "applied_generation": 1,
+        "desired_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "actual_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_heartbeat_at": "2026-09-24T08:15:48.268001+00:00",
+        "desired_state": {
+          "generation": 1,
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "download_permit": true
+        }
+      },
+      "active_campaigns": []
+    },
+    "recovered": {
+      "stage": "recovered",
+      "recorded_at": "2026-09-24T08:19:51.575244+00:00",
+      "fleet_summary": {
+        "total_records": 10000,
+        "real_records": 0,
+        "simulated_records": 10000,
+        "online": 2707,
+        "offline": 7293,
+        "never_seen": 0,
+        "healthy": 2707,
+        "degraded": 0,
+        "desired_actual_mismatch": 0,
+        "generated_at": "2026-09-24T08:20:00.093181+00:00"
+      },
+      "target_matches": [
+        {
+          "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+          "name": "device-07421",
+          "connectivity": "online",
+          "health_status": "healthy",
+          "last_seen_age_seconds": 5.264699
+        }
+      ],
+      "offline_devices_first_page": 200,
+      "target_offline_listed": false,
+      "target": {
+        "device_id": "6854a022-de6c-41c1-8386-0589af06b46c",
+        "name": "device-07421",
+        "mode": "simulated",
+        "hardware_profile": "cpu_onnx_x86_64",
+        "registration_status": "enrolled",
+        "connectivity": "online",
+        "health_status": "healthy",
+        "agent_state": "healthy",
+        "last_seen": "2026-09-24T08:19:56.346134+00:00",
+        "last_seen_age_seconds": 7.288661,
+        "site_id": "a3ca3946-912c-4a5f-942f-e0e7d98c87a7",
+        "desired_generation": 1,
+        "applied_generation": 1,
+        "desired_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "actual_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_version": {
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "version_label": "ppe-hansung-v1",
+          "evidence_mode": "simulated",
+          "status": "approved",
+          "manifest_sha256": "8e0f5fe79fb55d5e44830d67c231b61b46a08555952037f0cc1bb201cdc07c6b",
+          "class_mapping_version": "hansung_ppe_yolov8n_10@0be69c90227d20ba"
+        },
+        "last_reported_heartbeat_at": "2026-09-24T08:19:56.346198+00:00",
+        "desired_state": {
+          "generation": 1,
+          "release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+          "download_permit": true
+        }
+      },
+      "active_campaigns": []
+    }
+  }
+}
