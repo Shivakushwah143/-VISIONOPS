@@ -1,0 +1,423 @@
+{
+  "note": "Raw API responses captured live from the running Docker Compose control plane.",
+  "campaign_id": "61b2b643-f898-4c40-8763-9d3070b5ad7f",
+  "canary_device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+  "stages": {
+    "forced_candidate_paused": {
+      "stage": "forced_candidate_paused",
+      "campaign": {
+        "deployment_campaign_id": "61b2b643-f898-4c40-8763-9d3070b5ad7f",
+        "release_id": "e2cdf7bd-6866-4ac2-a1c6-464c1c7a24cc",
+        "status": "paused",
+        "current_ring": 0,
+        "failure_windows": 3,
+        "ring_started_at": "2026-09-24T10:04:42.525742+00:00"
+      },
+      "gate_status": "failed",
+      "gate_reasons": [
+        "convergence_timeout",
+        "heartbeat_stale",
+        "no_telemetry",
+        "telemetry_stale"
+      ],
+      "counts": {
+        "healthy": 1,
+        "pending": 9
+      },
+      "target_signals": [
+        {
+          "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+          "ring": 0,
+          "status": "healthy",
+          "reason_codes": []
+        },
+        {
+          "device_id": "1f4f91bf-f89c-48e9-a66a-bac95714da37",
+          "ring": 1,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "3580e119-ae54-4264-97f4-e157bdd546a3",
+          "ring": 1,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "642aa554-968c-406e-ade4-e73874e0e04d",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "7d4fa31f-add6-4864-9b60-ddca65ee878b",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "8d6f7fd9-1b32-45d6-bc5a-e4559635c149",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "93e03f68-b657-499c-a39d-c37bc7c3b01b",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "9fd5dcd8-61f8-4fe3-bc2c-c9b33ef484ae",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "c669ce7a-7e44-4845-a193-662344d92e85",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "c6d2be09-61c2-4fe3-8b1f-f2d4f0247a00",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        }
+      ],
+      "targets": [
+        {
+          "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+          "ring": 0,
+          "status": "healthy",
+          "assigned_generation": 4,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "1f4f91bf-f89c-48e9-a66a-bac95714da37",
+          "ring": 1,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "3580e119-ae54-4264-97f4-e157bdd546a3",
+          "ring": 1,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "642aa554-968c-406e-ade4-e73874e0e04d",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "7d4fa31f-add6-4864-9b60-ddca65ee878b",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "8d6f7fd9-1b32-45d6-bc5a-e4559635c149",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "93e03f68-b657-499c-a39d-c37bc7c3b01b",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "9fd5dcd8-61f8-4fe3-bc2c-c9b33ef484ae",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "c669ce7a-7e44-4845-a193-662344d92e85",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "c6d2be09-61c2-4fe3-8b1f-f2d4f0247a00",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        }
+      ],
+      "canary_device": {
+        "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+        "name": "hansung-canary-06",
+        "connectivity": "offline",
+        "last_seen_age_seconds": 1096.416732,
+        "health_status": "healthy",
+        "agent_state": "healthy",
+        "desired_release_id": "e2cdf7bd-6866-4ac2-a1c6-464c1c7a24cc",
+        "actual_release_id": "e2cdf7bd-6866-4ac2-a1c6-464c1c7a24cc",
+        "desired_generation": 4,
+        "applied_generation": 4,
+        "desired_version_label": null,
+        "actual_version_label": null,
+        "active_deployment_campaign_id": "61b2b643-f898-4c40-8763-9d3070b5ad7f"
+      },
+      "fleet_summary": {
+        "total_records": 10010,
+        "real_records": 0,
+        "simulated_records": 10010,
+        "online": 9,
+        "offline": 10001,
+        "never_seen": 0,
+        "healthy": 9,
+        "degraded": 0,
+        "desired_actual_mismatch": 0,
+        "generated_at": "2026-09-24T10:33:21.627097+00:00"
+      },
+      "campaign_timeline": [
+        {
+          "event_type": "paused",
+          "reason": "convergence_timeout,heartbeat_stale,telemetry_stale",
+          "created_at": "2026-09-24T10:16:20.541038+00:00"
+        },
+        {
+          "event_type": "start",
+          "reason": "begin canary ring 0",
+          "created_at": "2026-09-24T10:04:42.528626+00:00"
+        },
+        {
+          "event_type": "assigned",
+          "reason": "ring assignment",
+          "created_at": "2026-09-24T10:04:42.528617+00:00"
+        },
+        {
+          "event_type": "created",
+          "reason": "Live canary rollout demo: ppe-hansung-v2 candidate",
+          "created_at": "2026-09-24T10:04:42.359336+00:00"
+        }
+      ]
+    },
+    "rollback_reconciled": {
+      "stage": "rollback_reconciled",
+      "campaign": {
+        "deployment_campaign_id": "61b2b643-f898-4c40-8763-9d3070b5ad7f",
+        "release_id": "e2cdf7bd-6866-4ac2-a1c6-464c1c7a24cc",
+        "status": "rolled_back",
+        "current_ring": 0,
+        "failure_windows": 3,
+        "ring_started_at": "2026-09-24T10:40:21.200980+00:00"
+      },
+      "gate_status": "waiting",
+      "gate_reasons": [],
+      "counts": {
+        "rolled_back": 1,
+        "pending": 9
+      },
+      "target_signals": [
+        {
+          "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+          "ring": 0,
+          "status": "rolled_back",
+          "reason_codes": []
+        },
+        {
+          "device_id": "1f4f91bf-f89c-48e9-a66a-bac95714da37",
+          "ring": 1,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "3580e119-ae54-4264-97f4-e157bdd546a3",
+          "ring": 1,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "642aa554-968c-406e-ade4-e73874e0e04d",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "7d4fa31f-add6-4864-9b60-ddca65ee878b",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "8d6f7fd9-1b32-45d6-bc5a-e4559635c149",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "93e03f68-b657-499c-a39d-c37bc7c3b01b",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "9fd5dcd8-61f8-4fe3-bc2c-c9b33ef484ae",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "c669ce7a-7e44-4845-a193-662344d92e85",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        },
+        {
+          "device_id": "c6d2be09-61c2-4fe3-8b1f-f2d4f0247a00",
+          "ring": 2,
+          "status": "pending",
+          "reason_codes": []
+        }
+      ],
+      "targets": [
+        {
+          "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+          "ring": 0,
+          "status": "rolled_back",
+          "assigned_generation": 4,
+          "rollback_generation": 5
+        },
+        {
+          "device_id": "1f4f91bf-f89c-48e9-a66a-bac95714da37",
+          "ring": 1,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "3580e119-ae54-4264-97f4-e157bdd546a3",
+          "ring": 1,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "642aa554-968c-406e-ade4-e73874e0e04d",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "7d4fa31f-add6-4864-9b60-ddca65ee878b",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "8d6f7fd9-1b32-45d6-bc5a-e4559635c149",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "93e03f68-b657-499c-a39d-c37bc7c3b01b",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "9fd5dcd8-61f8-4fe3-bc2c-c9b33ef484ae",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "c669ce7a-7e44-4845-a193-662344d92e85",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        },
+        {
+          "device_id": "c6d2be09-61c2-4fe3-8b1f-f2d4f0247a00",
+          "ring": 2,
+          "status": "pending",
+          "assigned_generation": null,
+          "rollback_generation": null
+        }
+      ],
+      "canary_device": {
+        "device_id": "06701ec8-6fe4-486b-b1ba-504db7ae9735",
+        "name": "hansung-canary-06",
+        "connectivity": "online",
+        "last_seen_age_seconds": 6.768291,
+        "health_status": "healthy",
+        "agent_state": "healthy",
+        "desired_release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+        "actual_release_id": "26a4f2a4-4afb-4da2-a4fa-4fbbe109171b",
+        "desired_generation": 5,
+        "applied_generation": 5,
+        "desired_version_label": "ppe-hansung-v1",
+        "actual_version_label": "ppe-hansung-v1",
+        "campaign_release_label": "ppe-hansung-v2",
+        "active_deployment_campaign_id": null
+      },
+      "fleet_summary": {
+        "total_records": 10010,
+        "real_records": 0,
+        "simulated_records": 10010,
+        "online": 10,
+        "offline": 10000,
+        "never_seen": 0,
+        "healthy": 10,
+        "degraded": 0,
+        "desired_actual_mismatch": 0,
+        "generated_at": "2026-09-24T10:44:41.241833+00:00"
+      },
+      "campaign_timeline": [
+        {
+          "event_type": "rolled_back",
+          "reason": "all assigned targets restored",
+          "created_at": "2026-09-24T10:42:04.936700+00:00"
+        },
+        {
+          "event_type": "rollback",
+          "reason": "canary unhealthy; restore ppe-hansung-v1",
+          "created_at": "2026-09-24T10:40:21.206919+00:00"
+        },
+        {
+          "event_type": "paused",
+          "reason": "convergence_timeout,heartbeat_stale,telemetry_stale",
+          "created_at": "2026-09-24T10:16:20.541038+00:00"
+        },
+        {
+          "event_type": "start",
+          "reason": "begin canary ring 0",
+          "created_at": "2026-09-24T10:04:42.528626+00:00"
+        },
+        {
+          "event_type": "assigned",
+          "reason": "ring assignment",
+          "created_at": "2026-09-24T10:04:42.528617+00:00"
+        },
+        {
+          "event_type": "created",
+          "reason": "Live canary rollout demo: ppe-hansung-v2 candidate",
+          "created_at": "2026-09-24T10:04:42.359336+00:00"
+        }
+      ]
+    }
+  }
+}
