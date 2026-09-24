@@ -178,6 +178,16 @@ EXTERNAL_BASELINE_80 = ModelContract('external_baseline_yolov8m', {11: 0, 3: 1, 
 PROFILES[EXTERNAL_BASELINE_80.profile] = EXTERNAL_BASELINE_80
 
 
+def known(name):
+    """True when `name` is a declared contract profile.
+
+    `backend/app/lifecycle.py` uses this to reject an artifact that pins an
+    unknown profile before any rows are written; it complements `profile()`,
+    which raises instead of returning a boolean.
+    """
+    return name in PROFILES
+
+
 def profile(name):
     if name not in PROFILES:
         raise ValueError('unknown_model_contract_profile')

@@ -1,0 +1,1 @@
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"visionops_database_observations_available","instance":"backend:8000","job":"visionops"},"value":[1790178565.858,"1"]}]}}

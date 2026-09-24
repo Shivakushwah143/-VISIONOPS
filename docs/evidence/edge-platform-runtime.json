@@ -37,8 +37,8 @@
   },
   "hardware_telemetry": {
     "cpu_metrics_available": true,
-    "cpu_percent": 50.0,
-    "rss_bytes": 61136896,
+    "cpu_percent": 100.0,
+    "rss_bytes": 61009920,
     "cpu_count": 4,
     "gpu_metrics_available": false,
     "gpu": null,
@@ -171,10 +171,10 @@
       "dropped_frames_total": 58,
       "queue_depth": 2,
       "queue_capacity": 2,
-      "stream_age_seconds": 0.0930000000007567,
+      "stream_age_seconds": 0.1710000000002765,
       "rtsp_connected": false,
       "rtsp_reconnect_total": 0,
-      "last_frame_at": "2026-09-18T12:09:01.600712+00:00"
+      "last_frame_at": "2026-09-23T15:49:41.198847+00:00"
     },
     "gstreamer_available": false,
     "selected_backend_default": "opencv",
@@ -187,9 +187,9 @@
   },
   "rtsp_resilience": {
     "status": "VERIFIED (no RTSP server present; reconnect contract only)",
-    "endpoint": "rtsp://127.0.0.1:58616/live",
+    "endpoint": "rtsp://127.0.0.1:57386/live",
     "reconnects_observed": 2,
-    "elapsed_seconds": 0.25,
+    "elapsed_seconds": 0.27,
     "rtsp_connected": false,
     "input_frames_total": 0,
     "backoff": "bounded 1s..30s, reset after a decoding session",
@@ -236,11 +236,11 @@
     "artifact_sha256": "b239aa7e881fc590633944cf37df46ed477f3a819d09ec7a7bdb19d052ca2422",
     "profile": "hansung_ppe_yolov8n_10",
     "runtime": "ONNX_CPU",
-    "inference_frames": 38,
-    "processed_fps": 3.98,
-    "latency_ms_p50": 97.174,
-    "latency_ms_p95": 167.609,
-    "dropped_frames": 168,
+    "inference_frames": 9,
+    "processed_fps": 0.9,
+    "latency_ms_p50": 710.859,
+    "latency_ms_p95": 1007.111,
+    "dropped_frames": 197,
     "temporal_analyzers": [
       "ppe_sustained",
       "zone_dwell"
@@ -249,26 +249,14 @@
       {
         "event_type": "restricted_zone_dwell",
         "track_id": "1",
-        "supporting_frames": 6,
-        "span_seconds": 1.079
+        "supporting_frames": 5,
+        "span_seconds": 3.687
       },
       {
         "event_type": "restricted_zone_dwell",
         "track_id": "2",
-        "supporting_frames": 6,
-        "span_seconds": 1.079
-      },
-      {
-        "event_type": "restricted_zone_dwell",
-        "track_id": "1",
-        "supporting_frames": 24,
-        "span_seconds": 5.156
-      },
-      {
-        "event_type": "restricted_zone_dwell",
-        "track_id": "2",
-        "supporting_frames": 24,
-        "span_seconds": 5.156
+        "supporting_frames": 5,
+        "span_seconds": 3.687
       }
     ],
     "scope": "short functional run on real footage; not a sustained benchmark and not a model-quality evaluation"

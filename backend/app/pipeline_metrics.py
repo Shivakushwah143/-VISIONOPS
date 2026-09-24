@@ -11,6 +11,7 @@ class PipelineMetrics:
         available=GaugeMetricFamily('visionops_database_observations_available','Whether the persisted observation query completed')
         try:
             with Session() as db:
+                inventory=list(db.scalars(select(Device)))
                 devices=list(db.scalars(select(Device).where(Device.last_heartbeat_at!=None)))
                 windows=list(db.scalars(select(Metric).distinct(Metric.device_id,Metric.camera_id).order_by(Metric.device_id,Metric.camera_id,Metric.received_at.desc())))
                 heartbeats=list(db.scalars(select(Heartbeat).distinct(Heartbeat.device_id).order_by(Heartbeat.device_id,Heartbeat.received_at.desc())))
@@ -44,3 +45,19 @@ class PipelineMetrics:
         campaign=GaugeMetricFamily('visionops_campaign_status','Persisted campaign state',labels=['campaign_id','mode','status'])
         for c in campaigns:campaign.add_metric([c.deployment_campaign_id,c.mode,c.status],1)
         yield campaign
+        # Fleet roll-ups computed from persisted device rows at scrape time. Liveness uses
+        # the same 60 s server-receipt rule as the API's derived connectivity; a device that
+        # has never reported is neither healthy nor unreachable, it is never_seen.
+        stamp=now(); fresh=[d for d in inventory if d.last_heartbeat_at and (stamp-d.last_heartbeat_at).total_seconds()<=60]
+        never_seen=sum(d.last_heartbeat_at is None for d in inventory)
+        online=len(fresh); offline=len(inventory)-online-never_seen
+        total=GaugeMetricFamily('visionops_fleet_devices_total','Persisted logical device records')
+        total.add_metric([],len(inventory)); yield total
+        connectivity=GaugeMetricFamily('visionops_fleet_devices','Logical devices by derived connectivity',labels=['state'])
+        for state,value in (('online',online),('offline',offline),('never_seen',never_seen)):connectivity.add_metric([state],value)
+        yield connectivity
+        healthy=GaugeMetricFamily('visionops_fleet_healthy_devices','Devices with a fresh heartbeat reporting healthy state');healthy.add_metric([],sum(d.health_status=='healthy' for d in fresh));yield healthy
+        unreachable=GaugeMetricFamily('visionops_fleet_unreachable_devices','Devices whose last heartbeat is older than the 60 s liveness threshold');unreachable.add_metric([],offline);yield unreachable
+        stale=GaugeMetricFamily('visionops_fleet_stale_heartbeat_devices','Devices with a heartbeat older than a threshold',labels=['threshold'])
+        for seconds in (60,300):stale.add_metric([f'{seconds}s'],sum(d.last_heartbeat_at is not None and (stamp-d.last_heartbeat_at).total_seconds()>seconds for d in inventory))
+        yield stale

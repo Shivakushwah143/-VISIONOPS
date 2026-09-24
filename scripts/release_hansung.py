@@ -74,7 +74,12 @@ def main():
     contract = json.loads(CONTRACT.read_text())
     if contract["artifact"]["sha256"] != digest:
         raise SystemExit("contract/artifact hash mismatch; refusing to register")
-    print("model: %s (%d bytes, sha256 %s)" % (MODEL, len(model_bytes), digest))
+    # Resolved from the artifact's own declared class labels, never hardcoded, so the
+    # release manifest pins the mapping version both runtimes must agree on.
+    from shared import model_contract
+    contract_profile = model_contract.ModelContract.detect(contract["source_class_map"]).profile
+    print("model: %s (%d bytes, sha256 %s, contract %s)"
+          % (MODEL, len(model_bytes), digest, contract_profile))
 
     from scripts.mlflow_rest import MlflowRest
     c = Client(a.url, email)
@@ -161,6 +166,7 @@ def main():
                     "hardware_profile": PROFILE,
                     "input_shape": [1, 3, 640, 640],
                     "class_map": CLASS_MAP,
+                    "model_contract_profile": contract_profile,
                     "compatibility": {
                         "run_kind": "hansung_qualified_model_registration",
                         "purpose": a.purpose,

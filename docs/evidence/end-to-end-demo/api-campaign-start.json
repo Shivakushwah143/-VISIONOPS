@@ -1,0 +1,26 @@
+{
+  "recorded_at_note": "raw API responses captured live",
+  "requests": [
+    {
+      "path": "//deployments/4dbf7395-4cac-40c5-9154-d57dc16d30b8",
+      "status": 404,
+      "body": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "path": "//deployments/4dbf7395-4cac-40c5-9154-d57dc16d30b8/targets",
+      "status": 404,
+      "body": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "path": "//deployments/4dbf7395-4cac-40c5-9154-d57dc16d30b8/events",
+      "status": 404,
+      "body": {
+        "detail": "Not Found"
+      }
+    }
+  ]
+}

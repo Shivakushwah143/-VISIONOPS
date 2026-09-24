@@ -1,0 +1,535 @@
+{
+  "recorded_at_note": "raw API responses captured live",
+  "requests": [
+    {
+      "path": "/deployments/2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+      "status": 200,
+      "body": {
+        "data": {
+          "campaign": {
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "release_id": "db00d4cf-9a35-4f3e-91de-97664df8f25c",
+            "mode": "simulated",
+            "target_device_ids": [
+              "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+              "38ce739b-5719-466b-9b60-693d8b49adbd",
+              "548f0764-a0c1-4eb9-822c-24fa1b0e108f",
+              "75c16f2e-56f2-419f-b74e-c293f38eb06d",
+              "a289511c-fa26-496d-a005-a21258881850",
+              "ab4d50e1-2f29-4e33-9b2a-456396fface0",
+              "cba0ce53-2001-4976-9a69-d820321a6b61",
+              "d312f3a3-32b6-4b78-86cc-13b6a4077e39",
+              "e651b47e-db6f-4086-8f0c-d5c800a02d8b",
+              "f5ef5225-954c-4d3a-a70a-8957958e6284"
+            ],
+            "status": "running",
+            "current_ring": 0,
+            "ring_started_at": "2026-09-23T15:45:30.419955+00:00",
+            "observation_started_at": "2026-09-23T15:47:28.489960+00:00",
+            "failure_windows": 0,
+            "created_by": "5d65b257-e80d-4c39-aea3-84cb1cb2b4cb",
+            "reason": "Live canary rollout demo: ppe-hansung-v2 candidate",
+            "policy_snapshot": {
+              "rings": [
+                0.1,
+                0.25,
+                1
+              ],
+              "min_samples": 100,
+              "convergence_seconds": 600,
+              "observation_seconds": 300
+            },
+            "created_at": "2026-09-23T15:45:29.595371+00:00",
+            "updated_at": "2026-09-23T15:47:28.493064+00:00"
+          },
+          "counts": {
+            "assigned": 1,
+            "pending": 9
+          },
+          "gate_status": "waiting",
+          "gate_reasons": [
+            "insufficient_observation",
+            "observation_incomplete"
+          ],
+          "reason_code_descriptions": {
+            "HEARTBEAT_STALE": "No heartbeat within the freshness window; device telemetry is unknown",
+            "LOW_FPS": "Processed inference FPS is below the gate floor",
+            "HIGH_LATENCY": "Inference p95 latency exceeds the gate ceiling",
+            "MODEL_LOAD_FAILURE": "Candidate model could not load or the agent reported a load error",
+            "WORKER_CRASH_LOOP": "Worker restarted repeatedly during the observation window",
+            "STREAM_UNHEALTHY": "Video source is not connected or is not decoding frames",
+            "ARTIFACT_VERIFICATION_FAILED": "Device rejected the assigned artifact or generation",
+            "QUEUE_PRESSURE": "Decoder queue is saturated; frames are being dropped",
+            "RTSP_RECONNECTS": "The stream reconnected during the observation window",
+            "OBSERVATION_INCOMPLETE": "Candidate observation window is not complete",
+            "NO_TELEMETRY": "No persisted observation window exists for the assigned release"
+          },
+          "limits": {
+            "min_fps": 5.0,
+            "max_p95_ms": 200.0,
+            "max_queue_depth": 2.0,
+            "max_restarts": 0
+          },
+          "target_signals": [
+            {
+              "device_id": "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+              "ring": 0,
+              "status": "assigned",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "38ce739b-5719-466b-9b60-693d8b49adbd",
+              "ring": 1,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "548f0764-a0c1-4eb9-822c-24fa1b0e108f",
+              "ring": 1,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "75c16f2e-56f2-419f-b74e-c293f38eb06d",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "a289511c-fa26-496d-a005-a21258881850",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "ab4d50e1-2f29-4e33-9b2a-456396fface0",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "cba0ce53-2001-4976-9a69-d820321a6b61",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "d312f3a3-32b6-4b78-86cc-13b6a4077e39",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "e651b47e-db6f-4086-8f0c-d5c800a02d8b",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            },
+            {
+              "device_id": "f5ef5225-954c-4d3a-a70a-8957958e6284",
+              "ring": 2,
+              "status": "pending",
+              "reason_codes": [],
+              "signals": {}
+            }
+          ],
+          "observed_at": "2026-09-23T15:47:57.568381+00:00"
+        }
+      }
+    },
+    {
+      "path": "/deployments/2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7/targets",
+      "status": 200,
+      "body": {
+        "data": [
+          {
+            "deployment_target_id": "18e056e1-95c4-4b44-991a-0b31799c7c0f",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+            "ring": 0,
+            "status": "assigned",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": 8,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.010099998689838685,
+              "last": "2026-09-23T15:45:14.788886+00:00",
+              "first": "2026-09-23T15:39:23.559152+00:00",
+              "samples": 1408,
+              "duration": 345.061527,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": "014c988a-237e-4a77-aa52-664db4236cea",
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.644033+00:00",
+            "updated_at": "2026-09-23T15:47:28.425213+00:00"
+          },
+          {
+            "deployment_target_id": "a3711600-b47a-40d3-b58c-db3518af4a00",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "38ce739b-5719-466b-9b60-693d8b49adbd",
+            "ring": 1,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.005900001269765198,
+              "last": "2026-09-23T15:45:25.410207+00:00",
+              "first": "2026-09-23T15:39:19.512966+00:00",
+              "samples": 1426,
+              "duration": 360.932812,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.671708+00:00",
+            "updated_at": "2026-09-23T15:45:30.244427+00:00"
+          },
+          {
+            "deployment_target_id": "4533a9e2-bc05-465f-8b63-49bfb96b6dea",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "548f0764-a0c1-4eb9-822c-24fa1b0e108f",
+            "ring": 1,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003700000888784416,
+              "last": "2026-09-23T15:45:19.623312+00:00",
+              "first": "2026-09-23T15:39:18.013999+00:00",
+              "samples": 1426,
+              "duration": 355.963705,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.700884+00:00",
+            "updated_at": "2026-09-23T15:45:30.269001+00:00"
+          },
+          {
+            "deployment_target_id": "55b4d499-d5a5-43bf-8651-994a9fb54f69",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "75c16f2e-56f2-419f-b74e-c293f38eb06d",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003600000127335079,
+              "last": "2026-09-23T15:45:16.847722+00:00",
+              "first": "2026-09-23T15:39:21.427500+00:00",
+              "samples": 1352,
+              "duration": 349.489157,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.743708+00:00",
+            "updated_at": "2026-09-23T15:45:30.297332+00:00"
+          },
+          {
+            "deployment_target_id": "4205d093-fb22-411a-b651-c586dbac772a",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "a289511c-fa26-496d-a005-a21258881850",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.004699999408330768,
+              "last": "2026-09-23T15:45:21.797999+00:00",
+              "first": "2026-09-23T15:39:21.715617+00:00",
+              "samples": 1426,
+              "duration": 354.716027,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.777577+00:00",
+            "updated_at": "2026-09-23T15:45:30.315029+00:00"
+          },
+          {
+            "deployment_target_id": "fe7ca2b2-1c6f-4316-a78d-d93ced3dd488",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "ab4d50e1-2f29-4e33-9b2a-456396fface0",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003099999958067201,
+              "last": "2026-09-23T15:45:28.919031+00:00",
+              "first": "2026-09-23T15:39:19.494637+00:00",
+              "samples": 1351,
+              "duration": 364.823704,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.837941+00:00",
+            "updated_at": "2026-09-23T15:45:30.329638+00:00"
+          },
+          {
+            "deployment_target_id": "5ea3dda9-90be-427d-8b93-cf5b1502fbdf",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "cba0ce53-2001-4976-9a69-d820321a6b61",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003300001480965875,
+              "last": "2026-09-23T15:45:14.891164+00:00",
+              "first": "2026-09-23T15:39:19.421488+00:00",
+              "samples": 1423,
+              "duration": 349.310514,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.866980+00:00",
+            "updated_at": "2026-09-23T15:45:30.348012+00:00"
+          },
+          {
+            "deployment_target_id": "78ecb107-604f-4d12-bedf-e04af6e645fa",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "d312f3a3-32b6-4b78-86cc-13b6a4077e39",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003600000127335079,
+              "last": "2026-09-23T15:45:27.910630+00:00",
+              "first": "2026-09-23T15:39:22.950667+00:00",
+              "samples": 1426,
+              "duration": 360.246956,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.898287+00:00",
+            "updated_at": "2026-09-23T15:45:30.366395+00:00"
+          },
+          {
+            "deployment_target_id": "386c3745-cd64-4833-a635-bf83706a2861",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "e651b47e-db6f-4086-8f0c-d5c800a02d8b",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.007499998901039362,
+              "last": "2026-09-23T15:45:18.158097+00:00",
+              "first": "2026-09-23T15:39:19.703697+00:00",
+              "samples": 1423,
+              "duration": 352.657794,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.925521+00:00",
+            "updated_at": "2026-09-23T15:45:30.374669+00:00"
+          },
+          {
+            "deployment_target_id": "15c1beff-3331-47ea-9f5e-22c2cba1204c",
+            "deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "device_id": "f5ef5225-954c-4d3a-a70a-8957958e6284",
+            "ring": 2,
+            "status": "pending",
+            "previous_release_id": "3741c6b3-b9e6-4ad2-910d-c86e601a8dc1",
+            "previous_config_version_id": "cf70616f-d119-446c-b9b5-3c07fcfe7af1",
+            "assigned_generation": null,
+            "rollback_generation": null,
+            "baseline_metrics": {
+              "fps": 5.0,
+              "p95": 0.003099999958067201,
+              "last": "2026-09-23T15:45:25.997017+00:00",
+              "first": "2026-09-23T15:39:20.360720+00:00",
+              "samples": 1431,
+              "duration": 360.673386,
+              "restarts": 0
+            },
+            "permit_expires_at": null,
+            "assigned_config_version_id": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:45:29.958490+00:00",
+            "updated_at": "2026-09-23T15:45:30.388030+00:00"
+          }
+        ],
+        "page": {
+          "next_cursor": null,
+          "limit": 200
+        }
+      }
+    },
+    {
+      "path": "/devices/1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+      "status": 200,
+      "body": {
+        "data": {
+          "device": {
+            "device_id": "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+            "site_id": "a9116cb4-7eac-4f41-a444-fc830f4ed756",
+            "name": "hansung-canary-03",
+            "mode": "simulated",
+            "hardware_profile": "cpu_onnx_x86_64",
+            "registration_status": "enrolled",
+            "last_boot_id": "ae349606-79b7-479d-8f14-1d97e43b3347",
+            "last_sequence": 42,
+            "last_heartbeat_at": "2026-09-23T15:47:44.993821+00:00",
+            "desired_generation": 8,
+            "desired_release_id": "db00d4cf-9a35-4f3e-91de-97664df8f25c",
+            "desired_config_version_id": "014c988a-237e-4a77-aa52-664db4236cea",
+            "actual_release_id": "db00d4cf-9a35-4f3e-91de-97664df8f25c",
+            "actual_config_version_id": "014c988a-237e-4a77-aa52-664db4236cea",
+            "applied_generation": 8,
+            "agent_state": "healthy",
+            "health_status": "healthy",
+            "active_deployment_campaign_id": "2c3e9b5f-ccf9-422b-bc5f-e69dc39eb5e7",
+            "created_at": "2026-09-16T07:56:07.109240+00:00",
+            "updated_at": "2026-09-23T15:47:45.001474+00:00",
+            "last_seen_age_seconds": 12.746165,
+            "connectivity": "online"
+          },
+          "last_heartbeat": {
+            "heartbeat_id": "79761ebd-5264-4217-87f8-a5de84b9f5ec",
+            "device_id": "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+            "boot_id": "ae349606-79b7-479d-8f14-1d97e43b3347",
+            "sequence": 42,
+            "observed_at": "2026-09-23T15:47:40.493822+00:00",
+            "received_at": "2026-09-23T15:47:44.994030+00:00",
+            "actual_release_id": "db00d4cf-9a35-4f3e-91de-97664df8f25c",
+            "actual_config_version_id": "014c988a-237e-4a77-aa52-664db4236cea",
+            "applied_generation": 8,
+            "agent_state": "healthy",
+            "health_status": "healthy",
+            "source_states": [],
+            "capabilities": {
+              "os": "Windows 11",
+              "mode": "simulated",
+              "machine": "AMD64",
+              "runtime": "onnxruntime",
+              "architecture": "x86_64",
+              "cuda_version": null,
+              "agent_version": "0.1.0",
+              "compatibility": {
+                "notices": [],
+                "profile": "cpu_onnx_x86_64",
+                "reasons": [],
+                "compatible": true,
+                "simulated_hardware": false
+              },
+              "model_version": "5aaec3fc-108b-4c11-bcbf-4e46427e222d",
+              "video_backend": "opencv",
+              "jetpack_version": null,
+              "runtime_version": "1.30.0",
+              "artifact_version": "b152d281-a315-469a-8aca-f0399a729bf4",
+              "tensorrt_version": null,
+              "declared_versions": [],
+              "measured_versions": [],
+              "simulated_hardware": false,
+              "application_version": "ppe-hansung-v1",
+              "runtime_capabilities": {
+                "ONNX_CPU": true,
+                "TENSORRT": false,
+                "ONNX_CUDA": false
+              }
+            },
+            "rejected_generation": null,
+            "last_error_code": null,
+            "created_at": "2026-09-23T15:47:44.995510+00:00",
+            "updated_at": "2026-09-23T15:47:44.995519+00:00"
+          },
+          "desired_state": {
+            "device_id": "1c88609a-dba0-461c-9cf5-e4cf6adf1e44",
+            "site_id": "a9116cb4-7eac-4f41-a444-fc830f4ed756",
+            "generation": 8,
+            "release_id": "db00d4cf-9a35-4f3e-91de-97664df8f25c",
+            "config_version_id": "014c988a-237e-4a77-aa52-664db4236cea",
+            "manifest_sha256": "7bb7453e2f19c647e799f09ca9aab2b54900e482d89b4eaa0caf5a01501ff79f",
+            "config_sha256": "ee131e1a6c2610846914f361f9fbe7b2ced950da37d971fe287c0794009dcd51",
+            "download_permit": true,
+            "issued_at": "2026-09-23T15:47:45.001474+00:00"
+          },
+          "hardware_profile": {
+            "description": "Local/x86_64 CPU worker using ONNX Runtime",
+            "architectures": [
+              "x86_64"
+            ],
+            "runtimes": [
+              "onnxruntime"
+            ],
+            "accelerators": [
+              "cpu"
+            ],
+            "model_formats": [
+              "onnx"
+            ],
+            "requires": [],
+            "device_class": "cpu_only",
+            "profile": "cpu_onnx_x86_64",
+            "architecture": "x86_64"
+          },
+          "reported_runtime": {
+            "architecture": "x86_64",
+            "os": "Windows 11",
+            "runtime": "onnxruntime",
+            "runtime_version": "1.30.0",
+            "simulated_hardware": false,
+            "jetpack_version": null,
+            "cuda_version": null,
+            "tensorrt_version": null,
+            "declared_versions": [],
+            "measured_versions": []
+          }
+        }
+      }
+    }
+  ]
+}

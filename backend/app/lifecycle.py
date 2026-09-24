@@ -68,7 +68,10 @@ async def upload_artifact(artifact_kind:str,req:Request):
             digest_value=digestor.hexdigest(); idem={**metadata,'sha256':digest_value};old=replay(db,req,u,idem)
             if old:return old
             allowed=['model_version_id','format','precision','hardware_profile','input_shape','class_map','compatibility','model_contract_profile'] if cls is ModelArtifact else ['version_label','hardware_profile','entrypoint','compatibility']
-            body_exact(metadata,allowed,allowed)
+            # model_contract_profile is optional (resolved from the model's own metadata when
+            # absent); every other artifact field is required.
+            required=[f for f in allowed if f!='model_contract_profile'] if cls is ModelArtifact else allowed
+            body_exact(metadata,allowed,required)
             if cls is ModelArtifact:
                 if metadata['format'] not in ('onnx','tensorrt','pytorch') or metadata['class_map']!=DEFAULTS['class_map']:fail('invalid_model_artifact',422)
                 # Optional: pins the source->canonical interpretation in the release manifest.

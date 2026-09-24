@@ -1,4 +1,4 @@
-"""10K logical-fleet control-plane load driver.
+"""10K logical-fleet control-plane load driver and sustained simulator.
 
 This drives the real control plane (PostgreSQL APIs) with light-weight logical
 device records: no container, thread or process per device. Each logical device
@@ -6,23 +6,23 @@ carries only the state the control plane can observe - desired/actual generation
 release version, heartbeat, health, download state, deployment state and a metric
 summary - so 10,000 of them fit in one process.
 
-It measures, against the real server:
+Two modes share the same device model and the same real HTTP contracts:
 
-* heartbeat throughput (accepted heartbeats per second and request latency percentiles)
-* campaign calculation latency (`GET /deployments/{id}` gate assessment)
-* DB-backed request latency for every endpoint it touches
-* rollout reconciliation time (until the requested share of the fleet converges)
-* active download leases (devices whose desired state carries a download permit)
+* ``run()`` (default): a bounded measurement pass. It measures heartbeat
+  throughput, request/DB latency percentiles, campaign gate latency, rollout
+  reconciliation time and active download leases against the real server.
+* ``serve()``: a long-lived heartbeat service. Every online device sends one real
+  heartbeat per round so the fleet stays observable, while a hold file removes
+  selected devices from heartbeating - the UNREACHABLE/OFFLINE fault path.
 
 Nothing here is a physical-device claim, and it must not be presented as a 10,000
-Jetson deployment. See `docs/10K_FLEET_SCALING_REPORT.md`.
-
-IMPLEMENTED - NOT RUNTIME VERIFIED: this host has no PostgreSQL/FastAPI
-installation, so no measurement has been recorded in this repository.
+Jetson deployment. See ``docs/10K_FLEET_SCALING_REPORT.md`` and
+``docs/evidence/10k-fleet-demo/10K_FLEET_EVIDENCE.md``.
 """
 import argparse
 import json
 import math
+import os
 import random
 import threading
 import time
@@ -30,8 +30,8 @@ import uuid
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from statistics import mean
 
 import httpx
 
@@ -43,8 +43,12 @@ DEFAULT_METRIC_VALUES = {'inference_latency_ms': [12.0, 18.0, 25.0, 40.0, 60.0],
 
 @dataclass
 class LogicalDevice:
-    device_id: str
+    """One logical device: only the fields the control plane can observe."""
+
+    index: int
     name: str
+    device_id: str = ''
+    site_id: str = ''
     desired_generation: int = 0
     actual_generation: int = 0
     release_id: str | None = None
@@ -89,7 +93,10 @@ class Recorder:
 
 class ControlPlane:
     def __init__(self, url, email, password, origin=None):
-        self.http = httpx.Client(base_url=url.rstrip('/'), timeout=60, headers={'Origin': origin or url})
+        # The API enforces one configured Origin. Supply it explicitly when this runs from
+        # inside the Compose network, where the request host is a service DNS name.
+        self.http = httpx.Client(base_url=url.rstrip('/'), timeout=60,
+                                 headers={'Origin': origin or os.environ.get('VISIONOPS_CLIENT_ORIGIN') or url})
         response = self.http.post('/api/v1/auth/login', json={'email': email, 'password': password})
         response.raise_for_status()
         self.http.headers['X-CSRF-Token'] = response.json()['data']['csrf_token']
@@ -115,33 +122,106 @@ class ControlPlane:
         return self.request('GET', path, params=params)
 
 
-def provision(plane, devices, release_id, site_limit=1):
-    """Create device records and enrollment credentials. Bounded concurrency."""
+def _utc(offset=0):
+    return (datetime.now(timezone.utc) + timedelta(seconds=offset)).isoformat()
+
+
+def ensure_sites(plane, count):
+    """Reuse or create the deterministic sites the logical fleet is distributed over."""
     sites = plane.get('/api/v1/sites?limit=200')[0]['data']
-    site_id = sites[0]['site_id']
-    created = 0
-    for device in devices:
-        payload = {'site_id': site_id, 'name': device.name, 'mode': 'simulated',
-                   'hardware_profile': 'cpu_onnx_x86_64', 'release_id': release_id}
-        body, status = plane.post('/api/v1/devices', payload)
-        if body:
-            device.device_id = body['data']['device_id']
-            created += 1
-        elif status == 409:
-            pass
-        token_body, _ = plane.post(f'/api/v1/devices/{device.device_id}/enrollment-tokens',
-                                   {'reason': 'fleet scale simulation'})
-        if token_body:
-            enrollment, _ = plane.post('/api/v1/device-enrollments',
-                                       {'token': token_body['data']['token'],
-                                        'capabilities': {'agent_version': '0.1.0', 'mode': 'simulated'}})
-            if enrollment:
-                device.credential = enrollment['data']['device_credential']
-                device.enrolled = True
-    return created
+    by_name = {site['name']: site for site in sites}
+    site_ids = []
+    for index in range(count):
+        name = 'Fleet Site %02d' % (index + 1)
+        site = by_name.get(name)
+        if not site:
+            body, _ = plane.post('/api/v1/sites', {'name': name, 'timezone': 'UTC'})
+            site = body['data'] if body else None
+        if not site:
+            raise RuntimeError('site_create_failed:' + name)
+        by_name[name] = site
+        site_ids.append(site['site_id'])
+    return site_ids
 
 
-def heartbeat_round(plane, devices, concurrency=32, metric_summaries=True):
+def existing_devices(plane):
+    """Map (site_id, name) -> device_id so re-seeding is idempotent by logical name."""
+    rows = {}
+    cursor = None
+    while True:
+        params = {'limit': 200}
+        if cursor:
+            params['cursor'] = cursor
+        body, _ = plane.get('/api/v1/devices', params=params)
+        if not body:
+            break
+        for device in body['data']:
+            rows[(device['site_id'], device['name'])] = device['device_id']
+        cursor = body['page']['next_cursor']
+        if not cursor:
+            break
+    return rows
+
+
+def provision(plane, devices, release_id, site_count=1, concurrency=8, timeout=60):
+    """Create device records, enroll them and let each learn its desired state.
+
+    Bounded concurrency: one worker per in-flight device, never one per device.
+    """
+    site_ids = ensure_sites(plane, site_count)
+    known = existing_devices(plane)
+    created = [0]
+    lock = threading.Lock()
+
+    def setup(device):
+        device.site_id = site_ids[min(len(site_ids) - 1, device.index * len(site_ids) // len(devices))]
+        device_id = known.get((device.site_id, device.name))
+        if not device_id:
+            payload = {'site_id': device.site_id, 'name': device.name, 'mode': 'simulated',
+                       'hardware_profile': 'cpu_onnx_x86_64', 'release_id': release_id}
+            body, _ = plane.post('/api/v1/devices', payload)
+            if body:
+                device_id = body['data']['device_id']
+                with lock:
+                    created[0] += 1
+        if not device_id:
+            device.errors += 1
+            return
+        device.device_id = device_id
+        token_body, _ = plane.post('/api/v1/devices/%s/enrollment-tokens' % device_id,
+                                   {'reason': '10K logical fleet simulation'})
+        if not token_body:
+            device.errors += 1
+            return
+        enrollment, _ = plane.post('/api/v1/device-enrollments',
+                                   {'token': token_body['data']['token'],
+                                    'capabilities': {'agent_version': '0.1.0', 'mode': 'simulated'}})
+        if not enrollment:
+            device.errors += 1
+            return
+        device.credential = enrollment['data']['device_credential']
+        device.enrolled = True
+        # A real agent fetches desired state and reports what it applied. Applying the
+        # assigned generation immediately is the pre-campaign baseline, not a rollout.
+        desired, _ = plane.request('GET', '/api/v1/devices/%s/desired-state' % device_id,
+                                   headers={'Authorization': 'Bearer ' + device.credential})
+        if desired:
+            state = desired['data']
+            device.desired_generation = state['generation']
+            device.release_id = state['release_id']
+            device.config_version_id = state['config_version_id']
+            device.actual_generation = state['generation']
+            device.applied_release_id = state['release_id']
+            device.applied_config_version_id = state['config_version_id']
+            device.download_state = 'applied'
+            device.deployment_state = 'converged'
+
+    with ThreadPoolExecutor(max_workers=concurrency) as pool:
+        list(pool.map(setup, devices))
+    return created[0]
+
+
+def heartbeat_round(plane, devices, concurrency=32, include_metrics=False):
     """One heartbeat per online device, bounded concurrency, real HTTP."""
     accepted = [0]
     lock = threading.Lock()
@@ -162,9 +242,9 @@ def heartbeat_round(plane, devices, concurrency=32, metric_summaries=True):
                                           'camera_id': None, 'release_id': device.applied_release_id,
                                           'window_start': _utc(offset=-15), 'window_end': _utc(),
                                           'sample_count': 5, 'values': DEFAULT_METRIC_VALUES}]
-                                        if metric_summaries and device.applied_release_id else []),
+                                        if include_metrics and device.applied_release_id else []),
                    'rejected_generation': None, 'last_error_code': None}
-        body, _ = plane.request('POST', f'/api/v1/devices/{device.device_id}/heartbeats', json=payload,
+        body, _ = plane.request('POST', '/api/v1/devices/%s/heartbeats' % device.device_id, json=payload,
                                 headers={'Authorization': 'Bearer ' + device.credential})
         if body and body.get('data', {}).get('accepted'):
             with lock:
@@ -185,7 +265,7 @@ def reconcile(plane, devices, concurrency=32, stop_after=None):
         nonlocal fetched
         if not device.online or not device.credential:
             return
-        body, _ = plane.request('GET', f'/api/v1/devices/{device.device_id}/desired-state',
+        body, _ = plane.request('GET', '/api/v1/devices/%s/desired-state' % device.device_id,
                                 headers={'Authorization': 'Bearer ' + device.credential})
         if not body:
             return
@@ -210,24 +290,44 @@ def reconcile(plane, devices, concurrency=32, stop_after=None):
     return fetched
 
 
-def _utc(offset=0):
-    from datetime import datetime, timedelta, timezone
-    return (datetime.now(timezone.utc) + timedelta(seconds=offset)).isoformat()
+def read_hold(path):
+    """Devices whose heartbeat is deliberately withheld (the simulated fault set)."""
+    file = Path(path)
+    if not file.is_file():
+        return set()
+    try:
+        data = json.loads(file.read_text())
+    except Exception:
+        return set()
+    values = data.get('down', []) if isinstance(data, dict) else data
+    return {str(value) for value in values}
 
 
 def active_permits(devices):
     return sum(1 for device in devices if device.has_permit)
 
 
+def build_devices(count, prefix='device-', first_index=0):
+    """Deterministic logical devices: index N is always named ``device-N+1``.
+
+    ``first_index`` only shifts which slice of that one global numbering this
+    process owns, so a large fleet can be split across several driver processes
+    (``--first-index``) without renaming or duplicating a single logical device.
+    The default keeps the original behaviour exactly.
+    """
+    return [LogicalDevice(index=first_index + offset, name='%s%05d' % (prefix, first_index + offset + 1))
+            for offset in range(count)]
+
+
 def run(arguments):
     plane = ControlPlane(arguments.url, arguments.email, arguments.password)
-    devices = [LogicalDevice(device_id='pending-%05d' % index, name='Fleet-scale logical %06d' % index)
-               for index in range(arguments.devices)]
+    devices = build_devices(arguments.devices, arguments.name_prefix, arguments.first_index)
     random.seed(arguments.seed)
     offline = int(arguments.devices * arguments.offline_ratio)
     for device in random.sample(devices, offline):
         device.online = False
-    failing = random.sample([d for d in devices if d.online], int(len([d for d in devices if d.online]) * arguments.failure_ratio))
+    online = [d for d in devices if d.online]
+    failing = random.sample(online, int(len(online) * arguments.failure_ratio))
     for device in failing:
         device.health = 'unhealthy'
         device.agent_state = 'degraded'
@@ -239,18 +339,19 @@ def run(arguments):
                        'No GPU or model-quality metric is implied.')}
 
     provision_started = time.monotonic()
-    report['records_created'] = provision(plane, devices, arguments.release_id)
+    report['records_created'] = provision(plane, devices, arguments.release_id, arguments.sites, arguments.concurrency)
     report['provision_seconds'] = round(time.monotonic() - provision_started, 2)
     report['latency_during_provisioning'] = plane.latency.summary()
 
-    baseline = heartbeat_round(plane, devices, arguments.concurrency)
+    baseline = heartbeat_round(plane, devices, arguments.concurrency, include_metrics=True)
     started = time.monotonic()
     for _ in range(arguments.rounds):
         heartbeat_round(plane, devices, arguments.concurrency)
     elapsed = max(time.monotonic() - started, 1e-6)
+    active = len([d for d in devices if d.online and d.enrolled])
     report['heartbeats'] = {'rounds': arguments.rounds, 'first_round_accepted': baseline,
-                            'accepted_per_round': arguments.rounds * len([d for d in devices if d.online and d.enrolled]),
-                            'throughput_per_second': round(arguments.rounds * len([d for d in devices if d.online and d.enrolled]) / elapsed, 2),
+                            'accepted_per_round': arguments.rounds * active,
+                            'throughput_per_second': round(arguments.rounds * active / elapsed, 2),
                             'elapsed_seconds': round(elapsed, 2),
                             'latency': plane.latency.summary()}
 
@@ -262,11 +363,11 @@ def run(arguments):
                                               and d.actual_generation == d.desired_generation),
                              'active_download_leases': active_permits(devices),
                              'paused_or_offline': sum(1 for d in devices if not d.online or not d.has_permit)}
-        campaign_body, status = plane.get(f'/api/v1/deployments?limit=1')
+        campaign_body, status = plane.get('/api/v1/deployments?limit=1')
         if campaign_body and campaign_body['data']:
             campaign_id = campaign_body['data'][0]['deployment_campaign_id']
             gate_started = time.monotonic()
-            plane.get(f'/api/v1/deployments/{campaign_id}')
+            plane.get('/api/v1/deployments/%s' % campaign_id)
             report['campaign_gate_latency_ms'] = round((time.monotonic() - gate_started) * 1000, 3)
         report['latency_during_rollout'] = plane.latency.summary()
 
@@ -294,6 +395,33 @@ def run(arguments):
     return report
 
 
+def serve(arguments):
+    """Sustained heartbeat service; devices in the hold file stop heartbeating."""
+    plane = ControlPlane(arguments.url, arguments.email, arguments.password)
+    devices = build_devices(arguments.devices, arguments.name_prefix, arguments.first_index)
+    provision_started = time.monotonic()
+    created = provision(plane, devices, arguments.release_id, arguments.sites, arguments.concurrency)
+    enrolled = [d for d in devices if d.enrolled]
+    print(json.dumps({'event': 'fleet_provisioned', 'requested': arguments.devices, 'created': created,
+                      'enrolled': len(enrolled), 'errors': sum(1 for d in devices if d.errors),
+                      'sites': arguments.sites, 'seconds': round(time.monotonic() - provision_started, 2),
+                      'note': 'Logical devices simulated through the VisionOps control plane.'}), flush=True)
+    if len(enrolled) != arguments.devices:
+        raise SystemExit('provisioning incomplete: %d of %d enrolled' % (len(enrolled), arguments.devices))
+    rounds = 0
+    while True:
+        started = time.monotonic()
+        held = read_hold(arguments.hold_file)
+        active = [d for d in enrolled if d.name not in held]
+        accepted = heartbeat_round(plane, active, arguments.concurrency, include_metrics=(rounds < arguments.metric_rounds))
+        elapsed = round(time.monotonic() - started, 2)
+        rounds += 1
+        print(json.dumps({'event': 'fleet_heartbeat_round', 'round': rounds, 'held': sorted(held),
+                          'heartbeating': len(active), 'accepted': accepted, 'seconds': elapsed,
+                          'latency_p95_ms': plane.latency.summary().get('p95_ms')}), flush=True)
+        time.sleep(max(0.0, arguments.interval - elapsed))
+
+
 if __name__ == '__main__':
     import getpass
 
@@ -302,15 +430,24 @@ if __name__ == '__main__':
     parser.add_argument('--email', required=True)
     parser.add_argument('--password', default=None)
     parser.add_argument('--release-id', required=True)
-    parser.add_argument('--devices', type=int, default=1000, choices=[100, 1000, 10000])
+    parser.add_argument('--devices', type=int, default=1000)
+    parser.add_argument('--first-index', type=int, default=0,
+                        help='first logical device index this process owns; lets one fleet '
+                             'be split across several driver processes (device-N+1 naming)')
+    parser.add_argument('--sites', type=int, default=1)
+    parser.add_argument('--name-prefix', default='device-')
     parser.add_argument('--concurrency', type=int, default=32)
     parser.add_argument('--rounds', type=int, default=3)
     parser.add_argument('--offline-ratio', type=float, default=0.1)
     parser.add_argument('--failure-ratio', type=float, default=0.02)
     parser.add_argument('--campaign', action='store_true')
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--serve', action='store_true')
+    parser.add_argument('--interval', type=float, default=30)
+    parser.add_argument('--metric-rounds', type=int, default=2)
+    parser.add_argument('--hold-file', default='var/fleet-hold.json')
     parser.add_argument('--output', default='var/fleet-scale-report.json')
     parsed = parser.parse_args()
     if parsed.password is None:
         parsed.password = getpass.getpass('Password: ')
-    run(parsed)
+    (serve if parsed.serve else run)(parsed)
