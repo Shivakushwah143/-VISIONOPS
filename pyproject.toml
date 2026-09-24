@@ -2,6 +2,6 @@
 name = "industrial-visionops"
 version = "0.1.0"
 requires-python = ">=3.11,<3.13"
-dependencies = ["fastapi", "uvicorn", "sqlalchemy>=2,<3", "psycopg[binary]>=3,<4", "alembic", "argon2-cffi", "cryptography", "httpx[socks]", "prometheus-client", "psutil", "onnxruntime", "opencv-python-headless", "supervision", "pyyaml", "python-multipart", "onnx", "mlflow", "dvc", "opentelemetry-sdk", "opentelemetry-instrumentation-fastapi"]
+dependencies = ["fastapi", "uvicorn", "websockets", "sqlalchemy>=2,<3", "psycopg[binary]>=3,<4", "alembic", "argon2-cffi", "cryptography", "httpx[socks]", "prometheus-client", "psutil", "onnxruntime", "opencv-python-headless", "supervision", "pyyaml", "python-multipart", "onnx", "mlflow", "dvc", "opentelemetry-sdk", "opentelemetry-instrumentation-fastapi"]
 [project.optional-dependencies]
 training = ["ultralytics", "mlflow", "dvc", "onnx"]

@@ -29,7 +29,7 @@ POST creates return 201; command POSTs 200 unless listed. PATCH returns 200. GET
 | GET /video-sources | Sources / U | camera_id?,device_id?,cursor,limit | list VideoSource; locator redacted to safe host/path |
 | POST /video-sources | Assign source / O | camera_id,kind,locator,credential_ref?,enabled,loop? | data:{video_source,desired_generation,config_version_id}; 409 source_exists/campaign_active |
 | PATCH /video-sources/{video_source_id} | Edit/stop source / O | expected_source_revision,locator?,credential_ref?,enabled?,loop? | same shape as create; 409 revision_conflict/campaign_active |
-| GET /devices | Fleet table / U | site_id?,mode?,connectivity?,health_status?,cursor,limit | list EdgeDevice with derived connectivity and last_seen_age_seconds |
+| GET /devices | Fleet table / U | site_id?,mode?,connectivity?,health_status?,q?,cursor,limit | list EdgeDevice with derived connectivity and last_seen_age_seconds; `q` is a literal substring match over name/device_id (≤120 chars), `connectivity` is online/offline/never_seen using the same 60 s server-receipt rule as the summary |
 | POST /devices | Pre-register identity / O | site_id,name,mode,hardware_profile,release_id | EdgeDevice, desired_generation=1; 422 incompatible_release |
 | POST /devices/{device_id}/commission | Retry failed first installation / M | release_id,expected_generation,reason | EdgeDevice with newer desired generation; only actual_release_id=null and no active campaign;409 already_commissioned/conflict |
 | GET /devices/{device_id} | Device detail / U | none | data:{device,last_heartbeat,desired_state}; missing heartbeat null |
@@ -51,7 +51,7 @@ Creating a fresh enrollment token invalidates prior unused tokens; existing enro
 | GET /releases/{release_id}/manifest | Approved signed manifest / U or D | none | data:{manifest,manifest_sha256,signature,key_id}; D restricted to current desired/actual/last-good target references |
 | GET /model-artifacts/{model_artifact_id}/content | Download model / U or D | Range optional | binary with SHA-256 ETag, Content-Length; 206 range,416 invalid range; D reference-scoped |
 | GET /runtime-artifacts/{runtime_artifact_id}/content | Download runtime / U or D | Range optional | same binary contract and scope |
-| GET /config-versions/{config_version_id} | Immutable config / U or D | none | ConfigVersion with safe sources; D only own desired/current/rollback config |
+| GET /config-versions/{config_version_id} | Immutable config / U or D | none | ConfigVersion with safe sources; D only own desired/current/rollback config, plus the signed default config of a release assigned to it (required to verify a campaign config against the release's policy baseline before activation) |
 
 HeartbeatInput: device_id must match path; `boot_id` UUID, `sequence` nonnegative int, `observed_at`, `actual_release_id?`, `actual_config_version_id?`, `applied_generation` nonnegative int, `agent_state`, `health_status`, `source_states` (≤4), `capabilities`, `metric_summaries` (≤4 windows), `rejected_generation?`, `last_error_code?`. Metric window contract is document 12. No secret values. New boot_id permitted after successful credential authentication; central records retired boot IDs and rejects a delayed report from a retired boot. Device clock skew does not determine liveness; server received_at does.
 

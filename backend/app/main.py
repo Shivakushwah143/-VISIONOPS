@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, HTTPException, Response
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select, func, text, tuple_
+from sqlalchemy import select, func, or_, text, tuple_
 from sqlalchemy.exc import IntegrityError
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from .db import *
@@ -122,6 +122,21 @@ def list_route(path,cls,filters=()):
                 if req.query_params.get(enum) and req.query_params[enum] not in values:fail('invalid_filter',422)
             for f in filters:
                 if req.query_params.get(f): q=q.where(getattr(cls,f)==req.query_params[f])
+            if cls is Device:
+                # Fleet table search by logical name or device id; connectivity mirrors the
+                # derived field in db.public() so the table can be scoped to unreachable rows.
+                search=req.query_params.get('q')
+                if search:
+                    if len(search)>120: fail('invalid_filter',422)
+                    like='%'+search.replace('\\','\\\\').replace('%','\\%').replace('_','\\_')+'%'
+                    q=q.where(or_(Device.name.ilike(like,escape='\\'),Device.device_id.ilike(like,escape='\\')))
+                connectivity=req.query_params.get('connectivity')
+                if connectivity:
+                    if connectivity not in ('online','offline','never_seen'):fail('invalid_filter',422)
+                    cutoff=now()-timedelta(seconds=60)
+                    if connectivity=='never_seen': q=q.where(Device.last_heartbeat_at==None)
+                    elif connectivity=='online': q=q.where(Device.last_heartbeat_at!=None,Device.last_heartbeat_at>=cutoff)
+                    else: q=q.where(Device.last_heartbeat_at!=None,Device.last_heartbeat_at<cutoff)
             if cursor:
                 try:
                     stamp,key=json.loads(base64.urlsafe_b64decode(cursor)); uuid.UUID(key); stamp=datetime.fromisoformat(stamp)
@@ -335,7 +350,14 @@ def config(config_id:str,req:Request):
     with Session() as db:
         if req.headers.get('authorization'):
             d=device(req,db)
-            if not db.scalar(select(Assignment).where(Assignment.device_id==d.device_id,Assignment.config_version_id==config_id)):fail('config_scope_denied',403)
+            own=db.scalar(select(Assignment).where(Assignment.device_id==d.device_id,Assignment.config_version_id==config_id))
+            # A device assigned to a release may also read that release's signed
+            # default config: edge.agent.prepare() must compare a campaign-created
+            # config against it to prove no unsigned policy override
+            # (unsigned_policy_override). Mirrors the release-artifact scope join in
+            # download(); the default config's cameras list is empty by construction.
+            release_default=db.scalar(select(Assignment).join(Release,Assignment.release_id==Release.release_id).where(Assignment.device_id==d.device_id,Release.config_version_id==config_id))
+            if not (own or release_default):fail('config_scope_denied',403)
         else:user(req,db)
         return out(get(db,Config,config_id))
 @app.get('/api/v1/{artifact_kind}/{artifact_id}/content')

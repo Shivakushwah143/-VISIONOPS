@@ -19,8 +19,8 @@ import json
 from fastapi import WebSocket, WebSocketDisconnect
 from sqlalchemy import event
 
-from .db import Session, User, UserSession, digest, now  # noqa: F401 (re-exported helpers)
-from .security import ORIGIN
+from .db import Session, User, UserSession, now  # noqa: F401 (re-exported helpers)
+from .security import ORIGIN, digest
 
 EVENT_TYPES = ('safety_event.created', 'device.health_changed', 'campaign.status_changed')
 

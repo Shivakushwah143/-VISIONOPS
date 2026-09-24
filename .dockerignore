@@ -1,0 +1,20 @@
+# Keep local secrets, virtualenvs and runtime state out of every image.
+# Audit finding P0-2: without this file COPY . /app ships .env, signing keys
+# and var/ into the image, and makes the build context hundreds of MB.
+.env
+.env.*
+!.env.example
+.venv/
+.git/
+.gitignore
+var/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+node_modules/
+frontend/dist/
+**/*.tsbuildinfo
+*.key
+*.pem
+*.log
+*.partial

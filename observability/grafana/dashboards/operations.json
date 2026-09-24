@@ -248,6 +248,46 @@
       "targets": [
         {"expr": "visionops_camera_inference_latency_ms_p95", "refId": "A"}
       ]
+    },
+    {
+      "id": 17,
+      "type": "stat",
+      "title": "Logical devices (total)",
+      "description": "Persisted device records, counted at scrape time. Logical records, not physical installations.",
+      "gridPos": {"x": 0, "y": 64, "w": 6, "h": 6},
+      "targets": [{"expr": "visionops_fleet_devices_total", "refId": "A"}]
+    },
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Healthy devices",
+      "description": "Fresh heartbeat (<=60 s) reporting health_status=healthy.",
+      "gridPos": {"x": 6, "y": 64, "w": 6, "h": 6},
+      "targets": [{"expr": "visionops_fleet_healthy_devices", "refId": "A"}]
+    },
+    {
+      "id": 19,
+      "type": "stat",
+      "title": "Unreachable devices",
+      "description": "Last heartbeat older than the 60 s liveness threshold. Missing heartbeat, not a confirmed physical failure.",
+      "gridPos": {"x": 12, "y": 64, "w": 6, "h": 6},
+      "targets": [{"expr": "visionops_fleet_unreachable_devices", "refId": "A"}]
+    },
+    {
+      "id": 20,
+      "type": "stat",
+      "title": "Stale heartbeats (>60 s)",
+      "description": "Persisted devices whose last heartbeat is older than 60 seconds.",
+      "gridPos": {"x": 18, "y": 64, "w": 6, "h": 6},
+      "targets": [{"expr": "visionops_fleet_stale_heartbeat_devices{threshold=\"60s\"}", "refId": "A"}]
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Devices by connectivity",
+      "description": "Derived from persisted heartbeats at scrape time; never_seen means the device has not reported yet.",
+      "gridPos": {"x": 0, "y": 70, "w": 24, "h": 8},
+      "targets": [{"expr": "visionops_fleet_devices", "legendFormat": "{{state}}", "refId": "A"}]
     }
   ]
 }
