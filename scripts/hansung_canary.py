@@ -374,6 +374,25 @@ def phase_b(a):
     print("canary healthy on v2: version=%s generation=%s" % (
         healthy["actual_release_id"], healthy["applied_generation"]))
 
+    # If a previous phase left the campaign auto-paused (the agent fleet was stopped
+    # between phases, so the stale-heartbeat gate paused it), resume it through the
+    # real control-plane command first. That way the pause observed below is caused by
+    # the injected canary failure, not by a prior outage, and the evidence is candid.
+    # The command refuses while the canary heartbeat is still stale, so retry until the
+    # restarted fleet has reported again.
+    if campaign_state(c, cid)["campaign"]["status"] == "paused":
+        def resume():
+            code, body = request(c, "POST", "/deployments/%s/resume" % cid,
+                                 {"reason": "resume before canary failure injection"})
+            if code == 200:
+                return body
+            print("  resume not ready yet: %s %s" % (code, json.dumps(body)[:160]))
+            return None
+
+        if not wait_for(resume, a.converge_timeout, 10, "campaign resume"):
+            raise SystemExit("could not resume paused campaign")
+        print("resumed previously paused campaign before failure injection")
+
     pre_rows, pre_distribution = snapshot(c, v1, v2, fleet, canary_id)
     pre_gate = campaign_state(c, cid)
     print("pre-failure distribution: %s" % pre_distribution)
